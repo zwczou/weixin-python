@@ -5,7 +5,7 @@ from distutils.core import setup
 
 
 setup(
-        name='libweixin',
+        name='weixin-python',
         py_modules=['weixin'],
         version='0.1.0',
         description='Weixin for python',
