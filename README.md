@@ -45,15 +45,33 @@ snsapi_usrinfo方式
 
 ### 公众号管理
 
-创建qrcode
+初始化
+
+    from weixin.mp import WeixinMP
+
+    mp = WeixinMP(app_id, app_secret)
+
+创建临时qrcode
+
+    data = mp.qrcode_create(123, 30)
+    print mp.qrcode_show(data.ticket)
+
+创建永久性qrcode
+
+    # scene_id类型
+    mp.qrcode_create_limit(123)
+    # scene_str类型
+    mp.qrcode_create_limit("456")
 
 长链接变短链接
+
+    mp.shorturl("http://example.com/test")
 
 菜单管理
 
 关注列表
 
-微信支付
+### 微信支付
 
 初始化
 
@@ -61,14 +79,33 @@ snsapi_usrinfo方式
 
     pay = WeixinPay(app_id, mch_id, mch_key, notify_url)
 
-生成JSSDK需要的参数
+创建统一订单
+
+    out_trade_no = pay.nonce_str
+    try:
+        raw = pay.unified_order(openid="openid", trade_type="JSAPI", body=u"测试", out_trade_no=out_trade_no, total_fee=1)
+        print raw["prepay_id"]
+    except WeixinPayError, e:
+        print e.message
+
+也可以用JSAPI快速创建统一订单,并且快速返回js调起支付所需要的参数
+参数包括 `package`, `appId`, `timeStamp`, `nonceStr`, `sign`
 
     # total_fee 单位为分
-    pay.jsapi(openid='openid', body='测试', out_trade_no='1', total_fee=1)
+    pay.jsapi(openid='openid', body='测试', out_trade_no=out_trade_no, total_fee=1)
 
-检查响应数据
+查询订单
 
-    pay.check(pay.to_dict(request.data))
+    pay.close_order(out_trade_no)
+
+关闭订单
+
+    pay.order_query(out_trade_no=out_trade_no)
+
+检查签名是否通过
+
+    if pay.check(pay.to_dict(request.data)):
+        print "OK"
 
 
 ### 微信消息
