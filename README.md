@@ -18,16 +18,30 @@
 
     login = WeixinLogin(app_id, app_secret)
 
-生成认证地址
+微信有两种scope
+
+1. snsapi_base 只能获取用户的openid，不需要用户确认
+2. snsapi_userinfo 可以获取用户信息，需要用户主动确认
+
+
+snsapi_base方式
 
     url = login.authorize("http://example.com/authorized", "snsapi_base")
 
+snsapi_usrinfo方式
+
+    url = login.authorize("http://example.com/authorized", "snsapi_userinfo")
+
 获取用户信息
 
+    # 首根据code获取access_token跟openid
     data = login.access_token(code)
+    # 如果scope为`snsapi_userinfo`可以执行以下操作
     user_info = login.user_info(data.access_token, data.openid)
     print user_info.nickname
     print usre_info.name
+
+更多用法可以参考 `example/login.py`
 
 ### 公众号管理
 
