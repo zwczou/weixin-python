@@ -7,6 +7,8 @@ import random
 import hashlib
 import urllib2
 
+from map import Map
+
 try:
     from flask import request
 except Exception:
@@ -18,6 +20,9 @@ except ImportError:
     from xml.etree import cElementTree as etree
 except ImportError:
     from xml.etree import ElementTree as etree
+
+
+__all__ = ("WeixinPayError", "WeixinPay")
 
 
 class WeixinPayError(Exception):
@@ -77,7 +82,10 @@ class WeixinPay(object):
             resp = self.opener.open(req, timeout=20)
         except urllib2.HTTPError, e:
             resp = e
-        return self.to_dict(resp.read())
+        data = Map(self.to_dict(resp.read()))
+        if data.return_code == "FAIL":
+            raise WeixinPayError(data.return_msg)
+        return data
 
     def reply(self, msg, ok=True):
         code = "SUCCESS" if ok else "FAIL"
@@ -115,9 +123,7 @@ class WeixinPay(object):
         data.setdefault("sign", self.sign(data))
 
         raw = self.fetch(url, data)
-        if raw["return_code"] == "FAIL":
-            raise WeixinPayError(raw["return_msg"])
-        err_msg = raw.get("err_code_des")
+        err_msg = raw.err_code_des
         if err_msg:
             raise WeixinPayError(err_msg)
         return raw
@@ -153,10 +159,7 @@ class WeixinPay(object):
         data.setdefault("nonce_str", self.nonce_str)
         data.setdefault("sign", self.sign(data))
 
-        raw = self.fetch(url, data)
-        if raw["return_code"] == "FAIL":
-            raise WeixinPayError(raw["return_msg"])
-        return raw
+        return self.fetch(url, data)
 
     def close_order(self, out_trade_no, **data):
         """
@@ -172,10 +175,7 @@ class WeixinPay(object):
         data.setdefault("nonce_str", self.nonce_str)
         data.setdefault("sign", self.sign(data))
 
-        raw = self.fetch(url, data)
-        if raw["return_code"] == "FAIL":
-            raise WeixinPayError(raw["return_msg"])
-        return raw
+        return self.fetch(url, data)
 
     def refund(self, **data):
         """
@@ -201,10 +201,7 @@ class WeixinPay(object):
         data.setdefault("nonce_str", self.nonce_str)
         data.setdefault("sign", self.sign(data))
 
-        raw = self.fetch(url, data)
-        if raw["return_code"] == "FAIL":
-            raise WeixinPayError(raw["return_msg"])
-        return raw
+        return self.fetch(url, data)
 
     def refund_query(self, **data):
         """
@@ -225,10 +222,7 @@ class WeixinPay(object):
         data.setdefault("nonce_str", self.nonce_str)
         data.setdefault("sign", self.sign(data))
 
-        raw = self.fetch(url, data)
-        if raw["return_code"] == "FAIL":
-            raise WeixinPayError(raw["return_msg"])
-        return raw
+        return self.fetch(url, data)
 
     def download_bill(self, bill_date, **data):
         """
@@ -246,7 +240,4 @@ class WeixinPay(object):
         data.setdefault("nonce_str", self.nonce_str)
         data.setdefault("sign", self.sign(data))
 
-        raw = self.fetch(url, data)
-        if raw["return_code"] == "FAIL":
-            raise WeixinPayError(raw["return_msg"])
-        return raw
+        return self.fetch(url, data)
