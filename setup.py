@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 
 setup(
     name='weixin-python',
-    py_modules=['weixin'],
-    version='0.1.1',
+    license = 'BSD',
+    ppackages = find_packages(),
+    version='0.1.3',
     description='Weixin for python',
     author='zwczou',
     author_email='zwczou@gmail.com',

@@ -28,7 +28,7 @@ class WeixinMsgError(WeixinError):
 
 class WeixinMsg(object):
 
-    def __init__(self, token, sender, expires_in):
+    def __init__(self, token, sender=None, expires_in=0):
         self.token = token
         self.sender = sender
         self.expires_in = expires_in
@@ -39,11 +39,12 @@ class WeixinMsg(object):
             raise WeixinMsgError("weixin token is missing")
 
         if self.expires_in:
-            timestamp = int(timestamp)
-            delta = time.time() - timestamp
-            if delta < 0:
+            try:
+                timestamp = int(timestamp)
+            except ValueError:
                 return False
-            if delta > self.expires_in:
+            delta = time.time() - timestamp
+            if delta < 0 or delta > self.expires_in:
                 return False
         values = [self.token, str(timestamp), str(nonce)]
         s = ''.join(sorted(values))
@@ -70,13 +71,16 @@ class WeixinMsg(object):
     def format(self, kwargs):
         timestamp = int(kwargs['CreateTime'])
         return {
-            'id': kwargs['MsgId'],
+            'id': kwargs.get('MsgId'),
             'timestamp': timestamp,
             'receiver': kwargs['ToUserName'],
             'sender': kwargs['FromUserName'],
             'type': kwargs['MsgType'],
             'time': datetime.fromtimestamp(timestamp),
         }
+
+    def parse_text(self, raw):
+        return {'content': raw['Content']}
 
     def parse_image(self, raw):
         return {'picurl': raw['PicUrl']}
@@ -98,20 +102,20 @@ class WeixinMsg(object):
 
     def parse_voice(self, raw):
         return {
-            'media_id': raw['MediaID'],
+            'media_id': raw['MediaId'],
             'format': raw['Format'],
             'recognition': raw['Recognition'],
         }
 
     def parse_video(self, raw):
         return {
-            'media_id': raw['MediaID'],
+            'media_id': raw['MediaId'],
             'thumb_media_id': raw['ThumbMediaId'],
         }
 
     def parse_shortvideo(self, raw):
         return {
-            'media_id': raw['MediaID'],
+            'media_id': raw['MediaId'],
             'thumb_media_id': raw['ThumbMediaId'],
         }
 
@@ -172,7 +176,7 @@ class WeixinMsg(object):
             key = '*' if not key else key
             self._registry.setdefault(type, dict())[key] = func
             return func
-        return self.__class__(type, key)
+        return self.__call__(type, key)
 
     def __call__(self, type, key):
         def wrapper(func):
@@ -180,13 +184,24 @@ class WeixinMsg(object):
             return func
         return wrapper
 
+    @property
+    def all(self):
+        return self.register('*')
+
+    def text(self, key='*'):
+        return self.register('text', key)
+
+    def __getattr__(self, key):
+        if key in ['image', 'video', 'voice', 'shortvideo', 'location', 'link']:
+            return self.register(key)
+        return self.register('event', key)
+
     def view_func(self):
         signature = request.args.get('signature')
         timestamp = request.args.get('timestamp')
         nonce = request.args.get('nonce')
         if not self.validate(signature, timestamp, nonce):
             return 'signature failed', 400
-
         if request.method == 'GET':
             echostr = request.args.get('echostr', '')
             return echostr
@@ -199,17 +214,17 @@ class WeixinMsg(object):
         func = None
         type = ret['type']
         _registry = self._registry.get(type, dict())
-        if ret['type'] == 'text':
+        if type == 'text':
             if ret['content'] in _registry:
                 func = _registry[ret['content']]
-        elif ret['type'] == 'event':
+        elif type == 'event':
             if ret['event'].lower() in _registry:
                 func = _registry[ret['event']]
 
         if func is None and '*' in _registry:
             func = _registry['*']
         if func is None and '*' in self._registry:
-            func = self._registry['*']
+            func = self._registry.get('*', dict()).get('*')
 
         if func is None:
             func = 'failed'
