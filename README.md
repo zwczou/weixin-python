@@ -39,5 +39,19 @@
 
 ### 微信支付
 
+    from weixin.pay import WeixinPay
+
+    pay = WeixinPay(app_id, mch_id, mch_key, notify_url)
+
+#### 生成JSSDK需要的参数
+
+    // // total_fee 单位为分
+    pay.jsapi(openid='openid', body='测试', out_trade_no='1', total_fee=1)
+
+#### 检查响应数据
+
+    pay.check(pay.to_dict(request.data))
+
+
 ### 微信消息
 

@@ -29,8 +29,8 @@ class Weixin(object):
         app_secret = app.config.get("WEIXIN_APP_SECRET")
         if token:
             self.msg = WeixinMsg(token, sender, expires_in)
-        if mch_id and mch_key and notify_url:
-            self.pay = WeixinPay(mch_id, mch_key, notify_url)
+        if app_id and mch_id and mch_key and notify_url:
+            self.pay = WeixinPay(app_id, mch_id, mch_key, notify_url)
         if app_id and app_secret:
             self.login = WeixinLogin(app_id, app_secret)
             self.mp = WeixinMP(app_id, app_secret)

@@ -33,8 +33,9 @@ class WeixinPayError(WeixinError):
 
 class WeixinPay(object):
 
-    def __init__(self, mch_id, mch_key, notify_url):
+    def __init__(self, app_id, mch_id, mch_key, notify_url):
         self.opener = urllib2.build_opener(urllib2.HTTPSHandler())
+        self.app_id = app_id
         self.mch_id = mch_id
         self.mch_key = mch_key
         self.notify_url = notify_url
