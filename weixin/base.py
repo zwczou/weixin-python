@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
 
 
-__all__ = ("Map",)
+__all__ = ("Map", "WeixinError")
+
+
+class WeixinError(Exception):
+
+    def __init__(self, msg):
+        super(WeixinError, self).__init__(msg)
+
 
 class Map(dict):
     """

@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+
+
+from flask import current_app
+
+from msg import WeixinMsg
+from pay import WeixinPay
+from login import WeixinLogin
+from mp import WeixinMP
+
+
+class Weixin(object):
+
+    def __init__(self, app=None):
+        if app is None:
+            self.app = current_app
+        else:
+            self.app = app
+        self.init_app(self.app)
+
+    def init_app(self, app):
+        token = app.config.get("WEIXIN_TOKEN")
+        sender = app.config.get('WEIXIN_SENDER', None)
+        expires_in = app.config.get('WEIXIN_EXPIRES_IN', 0)
+        mch_id = app.config.get("WEIXIN_MCH_ID")
+        mch_key = app.config.get("WEIXIN_MCH_KEY")
+        notify_url = app.config.get("WEIXIN_NOTIFY_URL")
+        app_id = app.config.get("WEIXIN_APP_ID")
+        app_secret = app.config.get("WEIXIN_APP_SECRET")
+        if token:
+            self.msg = WeixinMsg(token, sender, expires_in)
+        if mch_id and mch_key and notify_url:
+            self.pay = WeixinPay(mch_id, mch_key, notify_url)
+        if app_id and app_secret:
+            self.login = WeixinLogin(app_id, app_secret)
+            self.mp = WeixinMP(app_id, app_secret)

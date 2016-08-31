@@ -4,14 +4,14 @@
 import json
 import urllib2
 
-from map import Map
+from base import Map, WeixinError
 from urllib import urlencode
 
 
 __all__ = ("WeixinLoginError", "WeixinLogin")
 
 
-class WeixinLoginError(Exception):
+class WeixinLoginError(WeixinError):
 
     def __init__(self, msg):
         super(WeixinLoginError, self).__init__(msg)

@@ -7,7 +7,7 @@ import random
 import hashlib
 import urllib2
 
-from map import Map
+from base import Map, WeixinError
 
 try:
     from flask import request
@@ -25,7 +25,7 @@ except ImportError:
 __all__ = ("WeixinPayError", "WeixinPay")
 
 
-class WeixinPayError(Exception):
+class WeixinPayError(WeixinError):
 
     def __init__(self, msg):
         super(WeixinPayError, self).__init__(msg)

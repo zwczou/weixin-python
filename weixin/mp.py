@@ -5,19 +5,20 @@ import time
 import json
 import requests
 
-from map import Map
+from base import Map, WeixinError
 from urllib import urlencode
 
 
-__all__ = ("WeixinError", "Weixin")
+__all__ = ("WeixinMPError", "WeixinMP")
 
-class WeixinError(Exception):
+
+class WeixinMPError(WeixinError):
 
     def __init__(self, msg):
-        super(WeixinError, self).__init__(msg)
+        super(WeixinMPError, self).__init__(msg)
 
 
-class Weixin(object):
+class WeixinMP(object):
     api_uri = "https://api.weixin.qq.com/cgi-bin"
 
     def __init__(self, app_id, app_secret):
@@ -39,7 +40,7 @@ class Weixin(object):
         data = Map(resp.json())
         if data.errcode:
             msg = "%(errcode)d %(errmsg)s" % data
-            raise WeixinError(msg)
+            raise WeixinMPError(msg)
         return data
 
     def get(self, path, params=None, token=True):
@@ -203,6 +204,9 @@ class Weixin(object):
         return self.post("/shorturl", data)
 
     def qrcode_create(self, scene_id, expires=30):
+        """
+        创建qrcode
+        """
         data = dict(
             action_name="QR_SCENE", expire_seconds=expires,
             action_info=dict(scene=dict(scene_id=scene_id)),
@@ -210,6 +214,9 @@ class Weixin(object):
         return self.post("/qrcode/create", data)
 
     def qrcode_create_limit(self, input):
+        """
+        创建qrcode限制方式
+        """
         data = dict()
         if isinstance(input, int):
             data["action_name"] = "QR_LIMIT_SCENE"
@@ -226,13 +233,16 @@ class Weixin(object):
         return self.post("/qrcode/create", data)
 
     def qrcode_show(self, ticket):
+        """
+        显示qrcode
+        """
         url = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
         return self.add_query(url, dict(ticket=ticket))
 
 
 if __name__ == '__main__':
     app_id, app_secret = "wxa686369357769bb1", "2619b8c64487d0bfe125839ed62d6a98"
-    wx = Weixin(app_id, app_secret)
+    wx = WeixinMP(app_id, app_secret)
     print wx.access_token
     print wx.access_token
     print wx.get_current_selfmenu_info()
