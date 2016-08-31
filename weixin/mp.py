@@ -238,13 +238,3 @@ class WeixinMP(object):
         """
         url = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
         return self.add_query(url, dict(ticket=ticket))
-
-
-if __name__ == '__main__':
-    app_id, app_secret = "wxa686369357769bb1", "2619b8c64487d0bfe125839ed62d6a98"
-    wx = WeixinMP(app_id, app_secret)
-    print wx.access_token
-    print wx.access_token
-    print wx.get_current_selfmenu_info()
-    data = wx.qrcode_create(123)
-    print wx.qrcode_show(data.ticket)

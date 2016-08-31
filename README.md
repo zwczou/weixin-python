@@ -45,7 +45,7 @@
 
 #### 生成JSSDK需要的参数
 
-    // // total_fee 单位为分
+    # total_fee 单位为分
     pay.jsapi(openid='openid', body='测试', out_trade_no='1', total_fee=1)
 
 #### 检查响应数据
