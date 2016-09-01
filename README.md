@@ -152,8 +152,8 @@ snsapi_usrinfo方式
     ]
     print mp.menu_create(data)
 
-# 删除菜单
-print mp.menu_delete()
+    # 删除菜单
+    print mp.menu_delete()
 
 更多用法参考 `example/mp.py`
 
