@@ -25,7 +25,7 @@
     app.add_url_rule("/", view_func=msg.view_func)
 
     @msg.all
-    def all_test(**kwargs):
+    def all(**kwargs):
         return msg.reply(
             kwargs['sender'], sender=kwargs['receiver'], content='all'
         )
@@ -33,18 +33,25 @@
 上面例子可以接收所有的用户发送的所有类型的消息, 如果仅仅是需要接受文本类型的消息
 
     @msg.text("*") # @msg.text()
-    def hello(**kwargs):
+    def all_text(**kwargs):
         return msg.reply(
             kwargs['sender'], sender=kwargs['receiver'], content='hello world'
         )
 
-如果需要监听文本消息的指定内容，可以使用
+如果需要接收文本消息的指定内容，可以使用
 
     @msg.text("help")
-    def hello(**kwargs):
+    def text_help(**kwargs):
         return msg.reply(
             kwargs['sender'], sender=kwargs['receiver'], content='帮组文档'
         )
+
+如果要接收用户的图像消息
+
+    @msg.image
+    def image(**kwargs):
+        print kwargs
+        return ""
 
 有以下消息类型包装器
 
