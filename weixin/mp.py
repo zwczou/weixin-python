@@ -55,7 +55,7 @@ class WeixinMP(object):
             url = self.add_query(url, dict(access_token=self.access_token))
         headers = {}
         if json_encode:
-            data = json.dumps(data)
+            data = json.dumps(data, ensure_ascii=False)
             headers["Content-Type"] = "application/json"
         return self.fetch("POST", url, data=data, headers=headers)
 

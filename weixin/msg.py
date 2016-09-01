@@ -7,7 +7,10 @@ import hashlib
 from datetime import datetime
 
 from base import WeixinError
-from flask import request, Response
+try:
+    from flask import request, Response
+except ImportError:
+    request, Response = None, None
 
 try:
     from lxml import etree
@@ -197,6 +200,9 @@ class WeixinMsg(object):
         return self.register('event', key)
 
     def view_func(self):
+        if request is None:
+            raise RuntimeError('view_func need Flask be installed')
+
         signature = request.args.get('signature')
         timestamp = request.args.get('timestamp')
         nonce = request.args.get('nonce')

@@ -51,6 +51,10 @@ snsapi_usrinfo方式
 
     mp = WeixinMP(app_id, app_secret)
 
+获取公众号唯一凭证
+
+    print mp.access_token
+
 创建临时qrcode
 
     data = mp.qrcode_create(123, 30)
@@ -69,7 +73,26 @@ snsapi_usrinfo方式
 
 菜单管理
 
-关注列表
+    # 获取菜单
+    try:
+        print mp.menu_get()
+    except WeixinError:
+        pass
+
+    # 创建菜单
+    data = [
+        {
+            "type": "view",
+            "name": "测试",
+            "url": "http://code.show/",
+        },
+    ]
+    print mp.menu_create(data)
+
+# 删除菜单
+print mp.menu_delete()
+
+更多用法参考 `example/mp.py`
 
 ### 微信支付
 
