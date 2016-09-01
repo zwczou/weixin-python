@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
+import os
 import time
 import json
 import requests
@@ -21,11 +22,13 @@ class WeixinMPError(WeixinError):
 class WeixinMP(object):
     api_uri = "https://api.weixin.qq.com/cgi-bin"
 
-    def __init__(self, app_id, app_secret):
+    def __init__(self, app_id, app_secret, path=None):
         self.app_id = app_id
         self.app_secret = app_secret
         self.session = requests.Session()
-        self._cached = Map()
+        if path is None:
+            path = os.path.join(os.getenv("HOME"), ".access_token")
+        self.path = path
 
     def add_query(self, url, args):
         if not args:
@@ -64,17 +67,18 @@ class WeixinMP(object):
         """
         获取服务端凭证
         """
-        token = self._cached.token
-        expires = self._cached.expires
-        if not token or expires < time.time():
+        timestamp = time.time()
+        if not os.path.exists(self.path) or \
+                int(os.path.getmtime(self.path)) < timestamp:
             params = dict()
             params.setdefault("grant_type", "client_credential")
             params.setdefault("appid", self.app_id)
             params.setdefault("secret", self.app_secret)
             data = self.get("/token", params, False)
-            self._cached.token = data.access_token
-            self._cached.expires = data.expires_in + time.time() - 1000
-        return self._cached.token
+            with open(self.path, 'wb') as fp:
+                fp.write(data.access_token)
+            os.utime(self.path, (timestamp, timestamp + data.expires_in - 600))
+        return open(self.path).read()
 
     def groups_create(self, name):
         """
