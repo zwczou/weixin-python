@@ -7,8 +7,64 @@
 
     pip install weixin-python
 
-
 ## 用法
+
+
+### 微信消息
+
+首先初始化
+
+    from flask import Flask
+    from weixin.msg import WeixinMsg
+
+    app = Flask(__name__)
+    msg = WeixinMsg("e10adc3949ba59abbe56e057f20f883e", None, 0)
+
+如果使用flask建议使用默认视图函数
+
+    app.add_url_rule("/", view_func=msg.view_func)
+
+    @msg.all
+    def all_test(**kwargs):
+        return msg.reply(
+            kwargs['sender'], sender=kwargs['receiver'], content='all'
+        )
+
+上面例子可以接收所有的用户发送的所有类型的消息, 如果仅仅是需要接受文本类型的消息
+
+    @msg.text("*") # @msg.text()
+    def hello(**kwargs):
+        return msg.reply(
+            kwargs['sender'], sender=kwargs['receiver'], content='hello world'
+        )
+
+如果需要监听文本消息的指定内容，可以使用
+
+    @msg.text("help")
+    def hello(**kwargs):
+        return msg.reply(
+            kwargs['sender'], sender=kwargs['receiver'], content='帮组文档'
+        )
+
+有以下消息类型包装器
+
+* 所有类型 `@msg.all`
+* 文本类型 `@msg.text()` `@msg.text("help")`
+* 图片类型 `@msg.image`
+* 视频类型 `@msg.video` `@msg.shortvideo`
+* 音频类型 `@msg.voice`
+* 坐标类型 `@msg.location`
+* 链接类型 `@msg.link`
+* 事件类型 `@msg.event`
+
+还可以监听具体的事件
+
+* 订阅事件 `@msg.subscribe`
+* 取消订阅事件 `@msg.unsubscribe`
+* 点击事件 `@msg.click`
+* 其它事件 `@msg.{event}`
+
+具体使用方式可以参考 `example/msg.py`
 
 ### 微信登陆
 
@@ -129,52 +185,3 @@ print mp.menu_delete()
 
     if pay.check(pay.to_dict(request.data)):
         print "OK"
-
-
-### 微信消息
-
-
-首先初始化
-
-    from flask import Flask
-    from weixin.msg import WeixinMsg
-
-    app = Flask(__name__)
-    msg = WeixinMsg("e10adc3949ba59abbe56e057f20f883e", None, 0)
-
-如果使用flask建议使用默认视图函数
-
-    app.add_url_rule("/", view_func=msg.view_func)
-
-    @msg.all
-    def all_test(**kwargs):
-        return msg.reply(
-            kwargs['sender'], sender=kwargs['receiver'], content='all'
-        )
-
-上面例子可以接收所有的用户发送的消息, 如果需要更加特殊的
-
-    @msg.text("hello")
-    def hello(**kwargs):
-        return msg.reply(
-            kwargs['sender'], sender=kwargs['receiver'], content='hello too'
-        )
-
-这个函数将处理用户发送的文本消息并且内容为 `hello`
-
-还有更多消息内容包装器
-
-* 图片类型 `@msg.image`
-* 视频类型 `@msg.video` `@msg.shortvideo`
-* 音频类型 `@msg.voice`
-* 坐标类型 `@msg.location`
-* 链接类型 `@msg.link`
-
-还可以监听事件
-
-* 订阅事件 `@msg.subscribe`
-* 取消订阅事件 `@msg.unsubscribe`
-* 点击事件 `@msg.click`
-* 其它事件 `@msg.{event}`
-
-具体使用方式可以参考 `example/msg.py`

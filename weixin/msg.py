@@ -195,7 +195,7 @@ class WeixinMsg(object):
         return self.register('text', key)
 
     def __getattr__(self, key):
-        if key in ['image', 'video', 'voice', 'shortvideo', 'location', 'link']:
+        if key in ['image', 'video', 'voice', 'shortvideo', 'location', 'link', 'event']:
             return self.register(key)
         return self.register('event', key)
 
@@ -225,7 +225,7 @@ class WeixinMsg(object):
                 func = _registry[ret['content']]
         elif type == 'event':
             if ret['event'].lower() in _registry:
-                func = _registry[ret['event']]
+                func = _registry[ret['event'].lower()]
 
         if func is None and '*' in _registry:
             func = _registry['*']
