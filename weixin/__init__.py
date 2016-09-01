@@ -13,11 +13,9 @@ from base import WeixinError, Map
 class Weixin(object):
 
     def __init__(self, app=None):
-        if app is None:
-            self.app = current_app
-        else:
+        if app is not None:
+            self.init_app(app)
             self.app = app
-        self.init_app(self.app)
 
     def init_app(self, app):
         token = app.config.get("WEIXIN_TOKEN")

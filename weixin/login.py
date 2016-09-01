@@ -37,6 +37,7 @@ class WeixinLogin(object):
         if data.errcode:
             msg = "%(errcode)d %(errmsg)s" % data
             raise WeixinLoginError(msg)
+        return data
 
     def authorize(self, redirect_uri, scope="snsapi_base", state=None):
         """
