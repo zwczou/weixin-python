@@ -6,10 +6,11 @@ from setuptools import setup, find_packages
 
 setup(
     name='weixin-python',
-    license = 'BSD',
-    ppackages = find_packages(),
-    version='0.2.0',
     description='Weixin for python',
+    long_description=open("README.md").read(),
+    license = 'BSD',
+    packages = find_packages(),
+    version='0.2.1',
     author='zwczou',
     author_email='zwczou@gmail.com',
     url='https://github.com/zwczou/weixin-python',
