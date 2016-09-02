@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
+import os
+
 from setuptools import setup, find_packages
 
 
@@ -12,7 +14,7 @@ def fread(fname):
 setup(
     name='weixin-python',
     description='Weixin for Python',
-    long_description=fread('README.rst'),
+    long_description=fread('README.md'),
     license = 'BSD',
     packages = find_packages(),
     version='0.2.4',
