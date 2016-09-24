@@ -182,11 +182,11 @@ snsapi_usrinfo方式
 
 查询订单
 
-    pay.close_order(out_trade_no)
+    pay.order_query(out_trade_no=out_trade_no)
 
 关闭订单
 
-    pay.order_query(out_trade_no=out_trade_no)
+    pay.close_order(out_trade_no)
 
 检查签名是否通过
 
