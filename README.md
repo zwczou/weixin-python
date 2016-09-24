@@ -13,6 +13,7 @@
 * [公众号相关](#公众号管理)
     * [TODO](#todo)
 * [微信支付](#微信支付)
+* [更多文档](https://github.com/zwczou/weixin-python/wiki)
 
 
 ## 安装
