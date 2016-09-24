@@ -15,6 +15,8 @@ app.add_url_rule("/", view_func=msg.view_func)
 @msg.all
 def all_test(**kwargs):
     print kwargs
+    # 或者直接返回
+    # return "all"
     return msg.reply(
         kwargs['sender'], sender=kwargs['receiver'], content='all'
     )
@@ -22,9 +24,7 @@ def all_test(**kwargs):
 
 @msg.text()
 def hello(**kwargs):
-    return msg.reply(
-        kwargs['sender'], sender=kwargs['receiver'], content='hello too'
-    )
+    return dict(content="hello too!", type="text")
 
 
 @msg.text("world")
