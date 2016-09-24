@@ -136,7 +136,9 @@ class WeixinMsg(object):
     def parse_invalid_type(self, raw):
         return {}
 
-    def reply(self, username, type='text', sender=None, **kwargs):
+    def reply(self, username=None, type='text', sender=None, **kwargs):
+        if not username:
+            raise RuntimeError("username is missing")
         sender = sender or self.sender
         if not sender:
             raise RuntimeError('WEIXIN_SENDER or sender argument is missing')
@@ -232,19 +234,27 @@ class WeixinMsg(object):
         if func is None and '*' in self._registry:
             func = self._registry.get('*', dict()).get('*')
 
+        text = ''
         if func is None:
-            func = 'failed'
+            text = 'failed'
 
         if callable(func):
             text = func(**ret)
-        else:
-            text = self.reply(
-                username=ret['sender'],
-                sender=ret['receiver'],
-                content=func,
-            )
 
-        return Response(text, content_type='text/xml; charset=utf-8')
+        content = ''
+        if isinstance(text, basestring):
+            if text:
+                content = self.reply(
+                    username=ret['sender'],
+                    sender=ret['receiver'],
+                    content=text,
+                )
+        elif isinstance(text, dict):
+            text.setdefault('username', ret['sender'])
+            text.setdefault('sender', ret['receiver'])
+            content = self.reply(**text)
+
+        return Response(content, content_type='text/xml; charset=utf-8')
 
     view_func.methods = ['GET', 'POST']
 

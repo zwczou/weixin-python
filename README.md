@@ -7,6 +7,8 @@
 
 * [安装](#安装)
 * [微信消息](#微信消息)
+    * [接收消息](#接收消息)
+    * [回复消息](#回复消息)
 * [微信登陆](#微信登陆)
 * [公众号相关](#公众号管理)
     * [TODO](#todo)
@@ -38,21 +40,19 @@
             kwargs['sender'], sender=kwargs['receiver'], content='all'
         )
 
+### 接收消息
+
 上面例子可以接收所有的用户发送的所有类型的消息, 如果仅仅是需要接受文本类型的消息
 
     @msg.text("*") # @msg.text()
     def all_text(**kwargs):
-        return msg.reply(
-            kwargs['sender'], sender=kwargs['receiver'], content='hello world'
-        )
+        return "hello world!"
 
 如果需要接收文本消息的指定内容，可以使用
 
     @msg.text("help")
     def text_help(**kwargs):
-        return msg.reply(
-            kwargs['sender'], sender=kwargs['receiver'], content='帮组文档'
-        )
+        return dict(content="help", type="text")
 
 如果要接收用户的图像消息
 
@@ -78,6 +78,23 @@
 * 取消订阅事件 `@msg.unsubscribe`
 * 点击事件 `@msg.click`
 * 其它事件 `@msg.{event}`
+
+### 回复消息
+
+首先可以直接调用`msg.reply函数`
+
+    return msg.reply(
+        kwargs['sender'], sender=kwargs['receiver'], content='all'
+    )
+
+直接返回字典，作为reply的参数
+
+    return dict(content='all')
+
+直接返回字符串
+
+    return "hello world!"
+
 
 具体使用方式可以参考 [example/msg.py](https://github.com/zwczou/weixin-python/blob/master/example/msg.py)
 
