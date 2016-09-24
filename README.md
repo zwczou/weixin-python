@@ -3,14 +3,22 @@
 
 提供微信登陆，公众号管理，微信支付，微信消息等处理
 
+### 目录
+
+* [安装](#安装)
+* [微信消息](#微信消息)
+* [微信登陆](#微信登陆)
+* [公众号相关](#公众号管理)
+    * [TODO](#todo)
+* [微信支付](#微信支付)
+
+
 ## 安装
 
     pip install weixin-python
 
-## 用法
 
-
-### 微信消息
+## 微信消息
 
 首先初始化
 
@@ -71,9 +79,9 @@
 * 点击事件 `@msg.click`
 * 其它事件 `@msg.{event}`
 
-具体使用方式可以参考 `example/msg.py`
+具体使用方式可以参考 [example/msg.py](https://github.com/zwczou/weixin-python/blob/master/example/msg.py)
 
-### 微信登陆
+## 微信登陆
 
 初始化
 
@@ -104,9 +112,9 @@ snsapi_usrinfo方式
     print user_info.nickname
     print usre_info.name
 
-更多用法可以参考 `example/login.py`
+更多用法可以参考 [example/login.py](https://github.com/zwczou/weixin-python/blob/master/example/login.py)
 
-### 公众号管理
+## 公众号管理
 
 初始化
 
@@ -155,9 +163,33 @@ snsapi_usrinfo方式
     # 删除菜单
     print mp.menu_delete()
 
-更多用法参考 `example/mp.py`
+更多用法参考 [example/mp.py](https://github.com/zwczou/weixin-python/blob/master/example/mp.py)
 
-### 微信支付
+### TODO
+
+* [X] 自定义菜单
+* [X] 用户管理
+    * [X] 用户分组管理
+    * [X] 设置用户备注名
+    * [X] 获取用户基本信息
+    * [X] 获取用户列表
+    * [X] 获取用户地理位置
+* [X] 账号管理
+    * [X] 生成带参数的二维码
+    * [X] 长链接转短链接
+    * [X] 微信认证事件推送
+* [X] 消息管理
+    * [X] 普通消息 [微信消息](#微信消息)
+    * [ ] 模板消息
+* [ ] 素材管理
+* [ ] 数据统计
+* [ ] 微信小店
+* [ ] 微信卡卷
+* [ ] 微信门店
+* [ ] 微信智能
+
+
+## 微信支付
 
 初始化
 
@@ -169,6 +201,9 @@ snsapi_usrinfo方式
 
     out_trade_no = pay.nonce_str
     try:
+        # 如果使用flask，默认会使用request.remoted_addr
+        # 如果不用flask，可以主动传入参数spbill_create_ip='8.8.8.8'
+        # raw = pay.unified_order(openid="openid", trade_type="JSAPI", body=u"测试", out_trade_no=out_trade_no, total_fee=1, spbill_create_ip='8.8.8.8')
         raw = pay.unified_order(openid="openid", trade_type="JSAPI", body=u"测试", out_trade_no=out_trade_no, total_fee=1)
         print raw["prepay_id"]
     except WeixinPayError, e:
@@ -182,13 +217,13 @@ snsapi_usrinfo方式
 
 查询订单
 
-    pay.close_order(out_trade_no)
+    pay.order_query(out_trade_no=out_trade_no)
 
 关闭订单
 
-    pay.order_query(out_trade_no=out_trade_no)
+    pay.close_order(out_trade_no)
 
-检查签名是否通过
+检查签名是否通过，可以在微信回调时候校验签名
 
     if pay.check(pay.to_dict(request.data)):
         print "OK"
