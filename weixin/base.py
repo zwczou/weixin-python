@@ -12,6 +12,7 @@ class WeixinError(Exception):
 
 class Map(dict):
     """
+    提供字典的dot访问模式
     Example:
     m = Map({'first_name': 'Eduardo'}, last_name='Pool', age=24, sports=['Soccer'])
     """
@@ -37,9 +38,10 @@ class Map(dict):
         self.__setitem__(key, value)
 
     def __getitem__(self, key):
-        if key not in self.__dict__:
-            super(Map, self).__setitem__(key, {})
-            self.__dict__.update({key: Map()})
+        # 如果想要打开.访问key不存在自动创建的功能
+        # if key not in self.__dict__:
+            # super(Map, self).__setitem__(key, {})
+            # self.__dict__.update({key: Map()})
         return self.__dict__[key]
 
     def __setitem__(self, key, value):
