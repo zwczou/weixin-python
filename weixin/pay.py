@@ -137,7 +137,7 @@ class WeixinPay(object):
         kwargs.setdefault("trade_type", "JSAPI")
         raw = self.unified_order(**kwargs)
         package = "prepay_id={0}".format(raw["prepay_id"])
-        timestamp = int(time.time())
+        timestamp = str(int(time.time()))
         nonce_str = self.nonce_str
         raw = dict(appId=self.app_id, timeStamp=timestamp,
                    nonceStr=nonce_str, package=package, signType="MD5")
@@ -165,7 +165,7 @@ class WeixinPay(object):
     def close_order(self, out_trade_no, **data):
         """
         关闭订单
-        transaction_id必填
+        out_trade_no必填
         appid, mchid, nonce_str不需要填入
         """
         url = "https://api.mch.weixin.qq.com/pay/closeorder"
