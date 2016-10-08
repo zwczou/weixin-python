@@ -38,10 +38,9 @@ class Map(dict):
         self.__setitem__(key, value)
 
     def __getitem__(self, key):
-        # 如果想要打开.访问key不存在自动创建的功能
-        # if key not in self.__dict__:
-            # super(Map, self).__setitem__(key, {})
-            # self.__dict__.update({key: Map()})
+        if key not in self.__dict__:
+            super(Map, self).__setitem__(key, {})
+            self.__dict__.update({key: Map()})
         return self.__dict__[key]
 
     def __setitem__(self, key, value):
