@@ -4,6 +4,9 @@
 import os
 import time
 import json
+import hashlib
+import string
+import random
 import requests
 
 from base import Map, WeixinError
@@ -22,13 +25,16 @@ class WeixinMPError(WeixinError):
 class WeixinMP(object):
     api_uri = "https://api.weixin.qq.com/cgi-bin"
 
-    def __init__(self, app_id, app_secret, path=None):
+    def __init__(self, app_id, app_secret, ac_path=None, jt_path=None):
         self.app_id = app_id
         self.app_secret = app_secret
         self.session = requests.Session()
-        if path is None:
-            path = os.path.join(os.getenv("HOME"), ".access_token")
-        self.path = path
+        if ac_path is None:
+            ac_path = os.path.join(os.getenv("HOME"), ".access_token")
+        if jt_path is None:
+            jt_path = os.path.join(os.getenv("HOME"), ".jsapi_ticket")
+        self.ac_path = ac_path
+        self.jt_path = jt_path
 
     def add_query(self, url, args):
         if not args:
@@ -68,17 +74,52 @@ class WeixinMP(object):
         获取服务端凭证
         """
         timestamp = time.time()
-        if not os.path.exists(self.path) or \
-                int(os.path.getmtime(self.path)) < timestamp:
+        if not os.path.exists(self.ac_path) or \
+                int(os.path.getmtime(self.ac_path)) < timestamp:
             params = dict()
             params.setdefault("grant_type", "client_credential")
             params.setdefault("appid", self.app_id)
             params.setdefault("secret", self.app_secret)
             data = self.get("/token", params, False)
-            with open(self.path, 'wb') as fp:
+            with open(self.ac_path, 'wb') as fp:
                 fp.write(data.access_token)
-            os.utime(self.path, (timestamp, timestamp + data.expires_in - 600))
-        return open(self.path).read()
+            os.utime(self.ac_path, (timestamp, timestamp + data.expires_in - 600))
+        return open(self.ac_path).read()
+
+    @property
+    def jsapi_ticket(self):
+        """
+        获取jsapi ticket
+        """
+        timestamp = time.time()
+        if not os.path.exists(self.jt_path) or \
+                int(os.path.getmtime(self.jt_path)) < timestamp:
+            params = dict()
+            params.setdefault("type", "jsapi")
+            data = self.get("/ticket/getticket", params, True)
+            with open(self.jt_path, 'wb') as fp:
+                fp.write(data.ticket)
+            os.utime(self.jt_path, (timestamp, timestamp + data.expires_in - 600))
+        return open(self.jt_path).read()
+
+    @property
+    def nonce_str(self):
+        char = string.ascii_letters + string.digits
+        return "".join(random.choice(char) for _ in range(32))
+
+    def jsapi_sign(self, url='', **kwargs):
+        """
+        生成签名给js使用
+        """
+        timestamp = str(int(time.time()))
+        nonce_str = self.nonce_str
+        kwargs.setdefault("jsapi_ticket", self.jsapi_ticket)
+        kwargs.setdefault("timestamp", timestamp)
+        kwargs.setdefault("noncestr", nonce_str)
+        raw = [(k, kwargs[k]) for k in sorted(kwargs.keys())]
+        s = "&".join("=".join(kv) for kv in raw if kv[1])
+        sign = hashlib.sha1(s.encode("utf-8")).hexdigest().lower()
+        return Map(sign=sign, timestamp=timestamp, noncestr=nonce_str)
 
     def groups_create(self, name):
         """
