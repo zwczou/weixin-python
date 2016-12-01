@@ -107,7 +107,7 @@ class WeixinMP(object):
         char = string.ascii_letters + string.digits
         return "".join(random.choice(char) for _ in range(32))
 
-    def jsapi_sign(self, url='', **kwargs):
+    def jsapi_sign(self, **kwargs):
         """
         生成签名给js使用
         """

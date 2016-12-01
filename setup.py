@@ -18,7 +18,7 @@ setup(
     long_description=fread('README.md'),
     license='BSD',
     packages=find_packages(),
-    version='0.2.8',
+    version='0.2.9',
     author='zwczou',
     author_email='zwczou@gmail.com',
     url='https://github.com/zwczou/weixin-python',
