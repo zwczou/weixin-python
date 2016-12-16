@@ -78,15 +78,23 @@ class WeixinPay(object):
         return raw
 
     def fetch(self, url, data):
+        data.setdefault("appid", self.app_id)
+        data.setdefault("mch_id", self.mch_id)
+        data.setdefault("nonce_str", self.nonce_str)
+        data.setdefault("sign", self.sign(data))
+
         req = urllib2.Request(url, data=self.to_xml(data))
         try:
             resp = self.opener.open(req, timeout=20)
         except urllib2.HTTPError, e:
             resp = e
-        data = Map(self.to_dict(resp.read()))
-        if data.return_code == "FAIL":
-            raise WeixinPayError(data.return_msg)
-        return data
+        content = resp.read()
+        if "return_code" in content:
+            data = Map(self.to_dict(content))
+            if data.return_code == "FAIL":
+                raise WeixinPayError(data.return_msg)
+            return data
+        return content
 
     def reply(self, msg, ok=True):
         code = "SUCCESS" if ok else "FAIL"
@@ -116,12 +124,8 @@ class WeixinPay(object):
             raise WeixinPayError("trade_type为JSAPI时，openid为必填参数")
         if data["trade_type"] == "NATIVE" and "product_id" not in data:
             raise WeixinPayError("trade_type为NATIVE时，product_id为必填参数")
-        data.setdefault("appid", self.app_id)
-        data.setdefault("mch_id", self.mch_id)
         data.setdefault("notify_url", self.notify_url)
-        data.setdefault("nonce_str", self.nonce_str)
         data.setdefault("spbill_create_ip", self.remote_addr)
-        data.setdefault("sign", self.sign(data))
 
         raw = self.fetch(url, data)
         err_msg = raw.err_code_des
@@ -155,10 +159,6 @@ class WeixinPay(object):
 
         if "out_trade_no" not in data and "transaction_id" not in data:
             raise WeixinPayError("订单查询接口中，out_trade_no、transaction_id至少填一个")
-        data.setdefault("appid", self.app_id)
-        data.setdefault("mch_id", self.mch_id)
-        data.setdefault("nonce_str", self.nonce_str)
-        data.setdefault("sign", self.sign(data))
 
         return self.fetch(url, data)
 
@@ -171,10 +171,6 @@ class WeixinPay(object):
         url = "https://api.mch.weixin.qq.com/pay/closeorder"
 
         data.setdefault("out_trace_no", out_trade_no)
-        data.setdefault("appid", self.app_id)
-        data.setdefault("mch_id", self.mch_id)
-        data.setdefault("nonce_str", self.nonce_str)
-        data.setdefault("sign", self.sign(data))
 
         return self.fetch(url, data)
 
@@ -197,11 +193,6 @@ class WeixinPay(object):
         if "op_user_id" not in data:
             raise WeixinPayError("退款申请接口中，缺少必填参数op_user_id");
 
-        data.setdefault("appid", self.app_id)
-        data.setdefault("mch_id", self.mch_id)
-        data.setdefault("nonce_str", self.nonce_str)
-        data.setdefault("sign", self.sign(data))
-
         return self.fetch(url, data)
 
     def refund_query(self, **data):
@@ -218,27 +209,19 @@ class WeixinPay(object):
                 and "transaction_id" not in data and "refund_id" not in data:
             raise WeixinPayError("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个")
 
-        data.setdefault("appid", self.app_id)
-        data.setdefault("mch_id", self.mch_id)
-        data.setdefault("nonce_str", self.nonce_str)
-        data.setdefault("sign", self.sign(data))
-
         return self.fetch(url, data)
 
-    def download_bill(self, bill_date, **data):
+    def download_bill(self, bill_date, bill_type="ALL", **data):
         """
         下载对账单
-        bill_date为必填参数
+        bill_date、bill_type为必填参数
         appid、mchid、nonce_str不需要填入
         """
         url = "https://api.mch.weixin.qq.com/pay/downloadbill"
+        data.setdefault("bill_date", bill_date)
+        data.setdefault("bill_type", bill_type)
+
         if "bill_date" not in data:
             raise WeixinPayError("对账单接口中，缺少必填参数bill_date")
-
-        data.setdefault("bill_date", bill_date)
-        data.setdefault("appid", self.app_id)
-        data.setdefault("mch_id", self.mch_id)
-        data.setdefault("nonce_str", self.nonce_str)
-        data.setdefault("sign", self.sign(data))
 
         return self.fetch(url, data)
