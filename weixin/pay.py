@@ -140,7 +140,7 @@ class WeixinPay(object):
         统一下单
         out_trade_no、body、total_fee、trade_type必填
         app_id, mchid, nonce_str自动填写
-        user_ip 在flask框架下可以自动填写
+        spbill_create_ip 在flask框架下可以自动填写, 非flask框架需要主动传入此参数
         """
         url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
 
