@@ -5,6 +5,7 @@ import time
 import string
 import random
 import hashlib
+import httplib
 import urllib2
 
 from base import Map, WeixinError
@@ -25,6 +26,33 @@ except ImportError:
 __all__ = ("WeixinPayError", "WeixinPay")
 
 
+FAIL = "FAIL"
+SUCCESS = "SUCCESS"
+
+
+class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
+
+    def __init__(self, key, cert):
+        """
+        Usage:
+            opener = urllib2.build_opener(HTTPSClientAuthHandler('/path/to/file.pem', '/path/to/file.pem.') )
+            response = opener.open("https://example.org")
+            print response.read()
+        """
+        urllib2.HTTPSHandler.__init__(self)
+        self.key = key
+        self.cert = cert
+
+    def https_open(self, req):
+        # Rather than pass in a reference to a connection class, we pass in
+        # a reference to a function which, for all intents and purposes,
+        # will behave as a constructor
+        return self.do_open(self.getConnection, req)
+
+    def getConnection(self, host, timeout=300):
+        return httplib.HTTPSConnection(host, key_file=self.key, cert_file=self.cert)
+
+
 class WeixinPayError(WeixinError):
 
     def __init__(self, msg):
@@ -33,12 +61,16 @@ class WeixinPayError(WeixinError):
 
 class WeixinPay(object):
 
-    def __init__(self, app_id, mch_id, mch_key, notify_url):
-        self.opener = urllib2.build_opener(urllib2.HTTPSHandler())
+    def __init__(self, app_id, mch_id, mch_key, notify_url, key=None, cert=None):
         self.app_id = app_id
         self.mch_id = mch_id
         self.mch_key = mch_key
         self.notify_url = notify_url
+        self.key = key
+        self.cert = cert
+        self.opener = urllib2.build_opener(urllib2.HTTPSHandler())
+        if self.key and self.cert:
+            self.openers = urllib2.build_opener(HTTPSClientAuthHandler(self.key, self.cert))
 
     @property
     def remote_addr(self):
@@ -77,7 +109,7 @@ class WeixinPay(object):
             raw[child.tag] = child.text
         return raw
 
-    def fetch(self, url, data):
+    def fetch(self, url, data, use_cert=False):
         data.setdefault("appid", self.app_id)
         data.setdefault("mch_id", self.mch_id)
         data.setdefault("nonce_str", self.nonce_str)
@@ -85,19 +117,22 @@ class WeixinPay(object):
 
         req = urllib2.Request(url, data=self.to_xml(data))
         try:
-            resp = self.opener.open(req, timeout=20)
+            opener = self.openers if use_cert else self.opener
+            resp = opener.open(req, timeout=20)
         except urllib2.HTTPError, e:
             resp = e
         content = resp.read()
         if "return_code" in content:
             data = Map(self.to_dict(content))
-            if data.return_code == "FAIL":
+            if data.return_code == FAIL:
                 raise WeixinPayError(data.return_msg)
+            if "result_code" in content and data.result_code == FAIL:
+                raise WeixinPayError(data.err_code_des)
             return data
         return content
 
     def reply(self, msg, ok=True):
-        code = "SUCCESS" if ok else "FAIL"
+        code = SUCCESS if ok else FAIL
         return self.to_xml(dict(return_code=code, return_msg=msg))
 
     def unified_order(self, **data):
@@ -128,9 +163,6 @@ class WeixinPay(object):
         data.setdefault("spbill_create_ip", self.remote_addr)
 
         raw = self.fetch(url, data)
-        err_msg = raw.err_code_des
-        if err_msg:
-            raise WeixinPayError(err_msg)
         return raw
 
     def jsapi(self, **kwargs):
@@ -181,9 +213,11 @@ class WeixinPay(object):
         out_refund_no、total_fee、refund_fee、op_user_id为必填参数
         appid、mchid、nonce_str不需要填入
         """
+        if not self.key or not self.cert:
+            raise WeixinError("退款申请接口需要双向证书")
         url = "https://api.mch.weixin.qq.com/secapi/pay/refund"
         if "out_trade_no" not in data and "transaction_id" not in data:
-            raise WeixinPayError("订单查询接口中，out_trade_no、transaction_id至少填一个")
+            raise WeixinPayError("退款申请接口中，out_trade_no、transaction_id至少填一个")
         if "out_refund_no" not in data:
             raise WeixinPayError("退款申请接口中，缺少必填参数out_refund_no");
         if "total_fee" not in data:
@@ -193,7 +227,7 @@ class WeixinPay(object):
         if "op_user_id" not in data:
             raise WeixinPayError("退款申请接口中，缺少必填参数op_user_id");
 
-        return self.fetch(url, data)
+        return self.fetch(url, data, True)
 
     def refund_query(self, **data):
         """

@@ -24,12 +24,14 @@ class Weixin(object):
         mch_id = app.config.get("WEIXIN_MCH_ID")
         mch_key = app.config.get("WEIXIN_MCH_KEY")
         notify_url = app.config.get("WEIXIN_NOTIFY_URL")
+        mch_key_file = app.config.get("WEIXIN_MCH_KEY_FILE")
+        mch_cert_file = app.config.get("WEIXIN_MCH_CERT_FILE")
         app_id = app.config.get("WEIXIN_APP_ID")
         app_secret = app.config.get("WEIXIN_APP_SECRET")
         if token:
             self.msg = WeixinMsg(token, sender, expires_in)
         if app_id and mch_id and mch_key and notify_url:
-            self.pay = WeixinPay(app_id, mch_id, mch_key, notify_url)
+            self.pay = WeixinPay(app_id, mch_id, mch_key, notify_url, mch_key_file, mch_cert_file)
         if app_id and app_secret:
             self.login = WeixinLogin(app_id, app_secret)
             self.mp = WeixinMP(app_id, app_secret)
