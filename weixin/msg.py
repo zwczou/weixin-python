@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 
+from __future__ import unicode_literals
+
 import time
 import hashlib
 
 from datetime import datetime
 
-from base import WeixinError
+from .base import WeixinError
 try:
     from flask import request, Response
 except ImportError:

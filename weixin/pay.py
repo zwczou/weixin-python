@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 
+from __future__ import unicode_literals
+
 import time
 import string
 import random
 import hashlib
-import httplib
-import urllib2
+import requests
 
-from base import Map, WeixinError
+from .base import Map, WeixinError
 
 try:
     from flask import request
@@ -30,29 +31,6 @@ FAIL = "FAIL"
 SUCCESS = "SUCCESS"
 
 
-class HTTPSClientAuthHandler(urllib2.HTTPSHandler):
-
-    def __init__(self, key, cert):
-        """
-        Usage:
-            opener = urllib2.build_opener(HTTPSClientAuthHandler('/path/to/file.pem', '/path/to/file.pem.') )
-            response = opener.open("https://example.org")
-            print response.read()
-        """
-        urllib2.HTTPSHandler.__init__(self)
-        self.key = key
-        self.cert = cert
-
-    def https_open(self, req):
-        # Rather than pass in a reference to a connection class, we pass in
-        # a reference to a function which, for all intents and purposes,
-        # will behave as a constructor
-        return self.do_open(self.getConnection, req)
-
-    def getConnection(self, host, timeout=300):
-        return httplib.HTTPSConnection(host, key_file=self.key, cert_file=self.cert)
-
-
 class WeixinPayError(WeixinError):
 
     def __init__(self, msg):
@@ -68,9 +46,7 @@ class WeixinPay(object):
         self.notify_url = notify_url
         self.key = key
         self.cert = cert
-        self.opener = urllib2.build_opener(urllib2.HTTPSHandler())
-        if self.key and self.cert:
-            self.openers = urllib2.build_opener(HTTPSClientAuthHandler(self.key, self.cert))
+        self.sess = requests.Session()
 
     @property
     def remote_addr(self):
@@ -83,14 +59,12 @@ class WeixinPay(object):
         char = string.ascii_letters + string.digits
         return "".join(random.choice(char) for _ in range(32))
 
-    to_utf8 = lambda self, x: x.encode("utf8") if isinstance(x, unicode) else x
-
     def sign(self, raw):
         raw = [(k, str(raw[k]) if isinstance(raw[k], int) else raw[k])
                for k in sorted(raw.keys())]
         s = "&".join("=".join(kv) for kv in raw if kv[1])
         s += "&key={0}".format(self.mch_key)
-        return hashlib.md5(self.to_utf8(s)).hexdigest().upper()
+        return hashlib.md5(s.encode("utf-8")).hexdigest().upper()
 
     def check(self, data):
         sign = data.pop("sign")
@@ -98,9 +72,10 @@ class WeixinPay(object):
 
     def to_xml(self, raw):
         s = ""
-        for k, v in raw.iteritems():
-            s += "<{0}>{1}</{0}>".format(k, self.to_utf8(v), k)
-        return "<xml>{0}</xml>".format(s)
+        for k, v in raw.items():
+            s += "<{0}>{1}</{0}>".format(k, v)
+        s = "<xml>{0}</xml>".format(s)
+        return s.encode("utf-8")
 
     def to_dict(self, content):
         raw = {}
@@ -115,13 +90,11 @@ class WeixinPay(object):
         data.setdefault("nonce_str", self.nonce_str)
         data.setdefault("sign", self.sign(data))
 
-        req = urllib2.Request(url, data=self.to_xml(data))
-        try:
-            opener = self.openers if use_cert else self.opener
-            resp = opener.open(req, timeout=20)
-        except urllib2.HTTPError, e:
-            resp = e
-        content = resp.read()
+        if use_cert:
+            resp = self.sess.post(url, data=self.to_xml(data), cert=(self.cert, self.key))
+        else:
+            resp = self.sess.post(url, data=self.to_xml(data))
+        content = resp.content.decode("utf-8")
         if "return_code" in content:
             data = Map(self.to_dict(content))
             if data.return_code == FAIL:

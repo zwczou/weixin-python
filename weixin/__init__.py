@@ -1,19 +1,32 @@
 # -*- coding: utf-8 -*-
 
 
-from flask import current_app
+from .msg import WeixinMsg
+from .pay import WeixinPay
+from .login import WeixinLogin
+from .mp import WeixinMP
+from .base import WeixinError, Map
 
-from msg import WeixinMsg
-from pay import WeixinPay
-from login import WeixinLogin
-from mp import WeixinMP
-from base import WeixinError, Map
+from collections import namedtuple
+
+
+__all__ = ("Weixin")
+__author__ = "Weicheng Zou <zwczou@gmail.com>"
+
+
+StandaloneApplication = namedtuple("StandaloneApplication", ["config"])
 
 
 class Weixin(object):
+    """
+    微信SDK
 
+    :param app 如果非flask，传入字典配置，如果是flask直接传入app实例
+    """
     def __init__(self, app=None):
         if app is not None:
+            if isinstance(app, dict):
+                app = StandaloneApplication(config=app)
             self.init_app(app)
             self.app = app
 

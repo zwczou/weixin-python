@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
 
-import json
-import urllib2
+from __future__ import unicode_literals
 
-from base import Map, WeixinError
-from urllib import urlencode
+import json
+import requests
+
+from .base import Map, WeixinError
+try:
+    from urllib import urlencode
+except Exception:
+    from urllib.parse import urlencode
 
 
 __all__ = ("WeixinLoginError", "WeixinLogin")
@@ -20,7 +25,7 @@ class WeixinLoginError(WeixinError):
 class WeixinLogin(object):
 
     def __init__(self, app_id, app_secret):
-        self.opener = urllib2.build_opener(urllib2.HTTPSHandler())
+        self.sess = requests.Session()
         self.app_id = app_id
         self.app_secret = app_secret
 
@@ -31,9 +36,8 @@ class WeixinLogin(object):
 
     def get(self, url, params):
         url = self.add_query(url, params)
-        req = urllib2.Request(url)
-        resp = self.opener.open(req)
-        data = Map(json.loads(resp.read()))
+        resp = self.sess.get(url)
+        data = Map(json.loads(resp.content))
         if data.errcode:
             msg = "%(errcode)d %(errmsg)s" % data
             raise WeixinLoginError(msg)

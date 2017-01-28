@@ -20,13 +20,13 @@ class Map(dict):
         super(Map, self).__init__(*args, **kwargs)
         for arg in args:
             if isinstance(arg, dict):
-                for k, v in arg.iteritems():
+                for k, v in arg.items():
                     if isinstance(v, dict):
                         v = Map(v)
                     self[k] = v
 
         if kwargs:
-            for k, v in kwargs.iteritems():
+            for k, v in kwargs.items():
                 if isinstance(v, dict):
                     v = Map(v)
                 self[k] = v

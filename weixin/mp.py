@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
+from __future__ import unicode_literals
+
 import os
 import time
 import json
@@ -9,8 +11,11 @@ import string
 import random
 import requests
 
-from base import Map, WeixinError
-from urllib import urlencode
+from .base import Map, WeixinError
+try:
+    from urllib import urlencode
+except ImportError:
+    from urllib.parse import urlencode
 
 
 __all__ = ("WeixinMPError", "WeixinMP")
