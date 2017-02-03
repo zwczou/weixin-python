@@ -199,9 +199,19 @@ class WeixinMsg(object):
         return self.register('text', key)
 
     def __getattr__(self, key):
+        key = key.lower()
         if key in ['image', 'video', 'voice', 'shortvideo', 'location', 'link', 'event']:
             return self.register(key)
-        return self.register('event', key)
+        if key in ['subscribe', 'unsubscribe', 'location', 'click', 'view', 'scan', \
+                   'scancode_push', 'scancode_waitmsg', 'pic_sysphoto', \
+                   'pic_photo_or_album', 'pic_weixin', 'location_select', \
+                   'qualification_verify_success', 'qualification_verify_fail', 'naming_verify_success', \
+                   'naming_verify_fail', 'annual_renew', 'verify_expired', \
+                   'card_pass_check', 'user_get_card', 'user_del_card', 'user_consume_card', \
+                   'user_pay_from_pay_cell', 'user_view_card', 'user_enter_session_from_card', \
+                   'card_sku_remind']:
+            return self.register('event', key)
+        raise AttributeError('invalid attribute "' + key + '"')
 
     def view_func(self):
         if request is None:

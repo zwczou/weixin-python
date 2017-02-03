@@ -4,6 +4,16 @@
 __all__ = ("Map", "WeixinError")
 
 
+try:
+    unicode = unicode
+except NameError:
+    # python 3
+    basestring = (str, bytes)
+else:
+    # python 2
+    bytes = str
+
+
 class WeixinError(Exception):
 
     def __init__(self, msg):

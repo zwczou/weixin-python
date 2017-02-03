@@ -17,7 +17,7 @@ __author__ = "Weicheng Zou <zwczou@gmail.com>"
 StandaloneApplication = namedtuple("StandaloneApplication", ["config"])
 
 
-class Weixin(object):
+class Weixin(WeixinMP, WeixinPay, WeixinLogin, WeixinMsg):
     """
     微信SDK
 
@@ -42,9 +42,9 @@ class Weixin(object):
         app_id = app.config.get("WEIXIN_APP_ID")
         app_secret = app.config.get("WEIXIN_APP_SECRET")
         if token:
-            self.msg = WeixinMsg(token, sender, expires_in)
+            WeixinMsg.__init__(self, token, sender, expires_in)
         if app_id and mch_id and mch_key and notify_url:
-            self.pay = WeixinPay(app_id, mch_id, mch_key, notify_url, mch_key_file, mch_cert_file)
+            WeixinPay.__init__(self, app_id, mch_id, mch_key, notify_url, mch_key_file, mch_cert_file)
         if app_id and app_secret:
-            self.login = WeixinLogin(app_id, app_secret)
-            self.mp = WeixinMP(app_id, app_secret)
+            WeixinLogin.__init__(self, app_id, app_secret)
+            WeixinMP.__init__(self, app_id, app_secret)
