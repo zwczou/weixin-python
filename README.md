@@ -5,7 +5,7 @@
 
 ## 文档目录
 
-* [快速开始](https://github.com/zwczou/weixin-python#文档目录)
+* [快速开始](#目录)
 * [微信消息](https://github.com/zwczou/weixin-python/wiki/%E5%BE%AE%E4%BF%A1%E6%B6%88%E6%81%AF)
 * [微信支付](https://github.com/zwczou/weixin-python/wiki/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98)
 * [微信登陆](https://github.com/zwczou/weixin-python/wiki/%E5%BE%AE%E4%BF%A1%E7%99%BB%E9%99%86)
