@@ -31,6 +31,9 @@ class Weixin(WeixinMP, WeixinPay, WeixinLogin, WeixinMsg):
             self.app = app
 
     def init_app(self, app):
+        if isinstance(app, dict):
+            app = StandaloneApplication(config=app)
+
         token = app.config.get("WEIXIN_TOKEN")
         sender = app.config.get('WEIXIN_SENDER', None)
         expires_in = app.config.get('WEIXIN_EXPIRES_IN', 0)
@@ -48,3 +51,12 @@ class Weixin(WeixinMP, WeixinPay, WeixinLogin, WeixinMsg):
         if app_id and app_secret:
             WeixinLogin.__init__(self, app_id, app_secret)
             WeixinMP.__init__(self, app_id, app_secret)
+
+        # 兼容老版本
+        if app_id and mch_id and mch_key and notify_url:
+            self.pay = WeixinPay(self, app_id, mch_id, mch_key, notify_url, mch_key_file, mch_cert_file)
+        if token:
+            self.msg = WeixinMsg(token, sender, expires_in)
+        if app_id and app_secret:
+            self.login = WeixinLogin(self, app_id, app_secret)
+            self.mp = WeixinMP(self, app_id, app_secret)
