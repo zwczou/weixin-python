@@ -7,10 +7,6 @@ import json
 import requests
 
 from .base import Map, WeixinError
-try:
-    from urllib import urlencode
-except Exception:
-    from urllib.parse import urlencode
 
 
 __all__ = ("WeixinLoginError", "WeixinLogin")
@@ -29,15 +25,9 @@ class WeixinLogin(object):
         self.app_id = app_id
         self.app_secret = app_secret
 
-    def add_query(self, url, args):
-        if not args:
-            return url
-        return url + ('?' in url and '&' or '?') + urlencode(args)
-
     def get(self, url, params):
-        url = self.add_query(url, params)
-        resp = self.sess.get(url)
-        data = Map(json.loads(resp.content))
+        resp = self.sess.get(url, params=params)
+        data = Map(json.loads(resp.content.decode("utf-8")))
         if data.errcode:
             msg = "%(errcode)d %(errmsg)s" % data
             raise WeixinLoginError(msg)
@@ -105,7 +95,7 @@ class WeixinLogin(object):
 
         return self.get(url, args)
 
-    def user_info(self, access_token, openid):
+    def userinfo(self, access_token, openid):
         """
         获取用户信息
 

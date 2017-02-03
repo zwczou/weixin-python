@@ -12,13 +12,12 @@ import random
 import requests
 
 from .base import Map, WeixinError
-try:
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urlencode
 
 
 __all__ = ("WeixinMPError", "WeixinMP")
+
+
+_path = os.getenv("HOME", "./")
 
 
 class WeixinMPError(WeixinError):
@@ -35,16 +34,11 @@ class WeixinMP(object):
         self.app_secret = app_secret
         self.session = requests.Session()
         if ac_path is None:
-            ac_path = os.path.join(os.getenv("HOME"), ".access_token")
+            ac_path = os.path.join(_path, ".access_token")
         if jt_path is None:
-            jt_path = os.path.join(os.getenv("HOME"), ".jsapi_ticket")
+            jt_path = os.path.join(_path, ".jsapi_ticket")
         self.ac_path = ac_path
         self.jt_path = jt_path
-
-    def add_query(self, url, args):
-        if not args:
-            return url
-        return url + ('?' in url and '&' or '?') + urlencode(args)
 
     def fetch(self, method, url, params=None, data=None, headers=None):
         req = requests.Request(method, url, params=params,
@@ -65,13 +59,13 @@ class WeixinMP(object):
 
     def post(self, path, data, json_encode=True, token=True):
         url = "{0}{1}".format(self.api_uri, path)
-        if token:
-            url = self.add_query(url, dict(access_token=self.access_token))
+        params = {}
+        token and params.setdefault("access_token", self.access_token)
         headers = {}
         if json_encode:
             data = json.dumps(data, ensure_ascii=False)
             headers["Content-Type"] = "application/json"
-        return self.fetch("POST", url, data=data, headers=headers)
+        return self.fetch("POST", url, params=params, data=data, headers=headers)
 
     @property
     def access_token(self):
@@ -87,7 +81,7 @@ class WeixinMP(object):
             params.setdefault("secret", self.app_secret)
             data = self.get("/token", params, False)
             with open(self.ac_path, 'wb') as fp:
-                fp.write(data.access_token)
+                fp.write(data.access_token.encode("utf-8"))
             os.utime(self.ac_path, (timestamp, timestamp + data.expires_in - 600))
         return open(self.ac_path).read()
 
@@ -103,7 +97,7 @@ class WeixinMP(object):
             params.setdefault("type", "jsapi")
             data = self.get("/ticket/getticket", params, True)
             with open(self.jt_path, 'wb') as fp:
-                fp.write(data.ticket)
+                fp.write(data.ticket.encode("utf-8"))
             os.utime(self.jt_path, (timestamp, timestamp + data.expires_in - 600))
         return open(self.jt_path).read()
 
