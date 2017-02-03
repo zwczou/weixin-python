@@ -116,7 +116,7 @@ weixin.init_app(app)
 
 ```
 
-如果不适用flask
+如果不使用flask
 
 ```
 # 根据需求导入仅供参考
