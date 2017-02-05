@@ -13,6 +13,11 @@
 
 欢迎提交[Pull requests](https://github.com/zwczou/weixin-python/pulls)
 
+
+如果需要单独使用其中的某些模块，可以见[文档目录](#文档目录)的具体模块
+
+如果需要组合在一起可以参考[快速开始](#目录)
+
 ## 目录
 
 * [安装](#安装)
@@ -238,6 +243,7 @@ if __name__ == '__main__':
 
 `access_token`默认保存在`~/.access_token`
 `jsapi_ticket`默认保存在`~/.jsapi_ticket`
+
 默认在(HOME)目录下面，如果需要更改到指定的目录，可以导入库之后修改，如下
 
 ```
