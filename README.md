@@ -234,11 +234,27 @@ if __name__ == '__main__':
 
 ### 微信公众号
 
-**注意**: 如果使用分布式，需要自己实现access_token
+**注意**: 如果使用分布式，需要自己实现`access_token`跟`jsapi_ticket`函数
+
+`access_token`默认保存在`~/.access_token`
+`jsapi_ticket`默认保存在`~/.jsapi_ticket`
+默认在(HOME)目录下面，如果需要更改到指定的目录，可以导入库之后修改，如下
+
+```
+import weixin
+
+DEFAULT_DIR = "/tmp"
+```
 
 获取公众号唯一凭证
 
 	weixin.access_token
+
+
+获取ticket
+
+	weixin.jsapi_ticket
+
 
 创建临时qrcode
 

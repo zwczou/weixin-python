@@ -54,9 +54,9 @@ class Weixin(WeixinMP, WeixinPay, WeixinLogin, WeixinMsg):
 
         # 兼容老版本
         if app_id and mch_id and mch_key and notify_url:
-            self.pay = WeixinPay(self, app_id, mch_id, mch_key, notify_url, mch_key_file, mch_cert_file)
+            self.pay = WeixinPay(app_id, mch_id, mch_key, notify_url, mch_key_file, mch_cert_file)
         if token:
             self.msg = WeixinMsg(token, sender, expires_in)
         if app_id and app_secret:
-            self.login = WeixinLogin(self, app_id, app_secret)
-            self.mp = WeixinMP(self, app_id, app_secret)
+            self.login = WeixinLogin(app_id, app_secret)
+            self.mp = WeixinMP(app_id, app_secret)

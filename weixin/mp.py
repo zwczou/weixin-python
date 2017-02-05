@@ -17,7 +17,7 @@ from .base import Map, WeixinError
 __all__ = ("WeixinMPError", "WeixinMP")
 
 
-_path = os.getenv("HOME", "./")
+DEFAULT_DIR = os.getenv("HOME", os.getcwd())
 
 
 class WeixinMPError(WeixinError):
@@ -34,9 +34,9 @@ class WeixinMP(object):
         self.app_secret = app_secret
         self.session = requests.Session()
         if ac_path is None:
-            ac_path = os.path.join(_path, ".access_token")
+            ac_path = os.path.join(DEFAULT_DIR, ".access_token")
         if jt_path is None:
-            jt_path = os.path.join(_path, ".jsapi_ticket")
+            jt_path = os.path.join(DEFAULT_DIR, ".jsapi_ticket")
         self.ac_path = ac_path
         self.jt_path = jt_path
 
