@@ -17,7 +17,7 @@ __author__ = "Weicheng Zou <zwczou@gmail.com>"
 StandaloneApplication = namedtuple("StandaloneApplication", ["config"])
 
 
-class Weixin(WeixinMP, WeixinPay, WeixinLogin, WeixinMsg):
+class Weixin(WeixinLogin, WeixinPay, WeixinMP, WeixinMsg):
     """
     微信SDK
 

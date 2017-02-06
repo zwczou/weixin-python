@@ -109,3 +109,11 @@ class WeixinLogin(object):
         args.setdefault("lang", "zh_CN")
 
         return self.get(url, args)
+
+    def user_info(self, access_token, openid):
+        """
+        获取用户信息
+
+        兼容老版本0.3.0,与WeixinMP的user_info冲突
+        """
+        return self.userinfo(access_token, openid)
