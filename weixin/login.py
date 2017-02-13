@@ -25,7 +25,7 @@ class WeixinLogin(object):
         self.app_id = app_id
         self.app_secret = app_secret
 
-    def get(self, url, params):
+    def _get(self, url, params):
         resp = self.sess.get(url, params=params)
         data = Map(json.loads(resp.content.decode("utf-8")))
         if data.errcode:
@@ -65,7 +65,7 @@ class WeixinLogin(object):
         args.setdefault("code", code)
         args.setdefault("grant_type", "authorization_code")
 
-        return self.get(url, args)
+        return self._get(url, args)
 
     def auth(self, access_token, openid):
         """
@@ -79,7 +79,7 @@ class WeixinLogin(object):
         args.setdefault("access_token", access_token)
         args.setdefault("openid", openid)
 
-        return self.get(url, args)
+        return self._get(url, args)
 
     def refresh_token(self, refresh_token):
         """
@@ -93,7 +93,7 @@ class WeixinLogin(object):
         args.setdefault("grant_type", "refresh_token")
         args.setdefault("refresh_token", refresh_token)
 
-        return self.get(url, args)
+        return self._get(url, args)
 
     def userinfo(self, access_token, openid):
         """
@@ -108,7 +108,7 @@ class WeixinLogin(object):
         args.setdefault("openid", openid)
         args.setdefault("lang", "zh_CN")
 
-        return self.get(url, args)
+        return self._get(url, args)
 
     def user_info(self, access_token, openid):
         """

@@ -84,7 +84,7 @@ class WeixinPay(object):
             raw[child.tag] = child.text
         return raw
 
-    def fetch(self, url, data, use_cert=False):
+    def _fetch(self, url, data, use_cert=False):
         data.setdefault("appid", self.app_id)
         data.setdefault("mch_id", self.mch_id)
         data.setdefault("nonce_str", self.nonce_str)
@@ -135,7 +135,7 @@ class WeixinPay(object):
         data.setdefault("notify_url", self.notify_url)
         data.setdefault("spbill_create_ip", self.remote_addr)
 
-        raw = self.fetch(url, data)
+        raw = self._fetch(url, data)
         return raw
 
     def jsapi(self, **kwargs):
@@ -165,7 +165,7 @@ class WeixinPay(object):
         if "out_trade_no" not in data and "transaction_id" not in data:
             raise WeixinPayError("订单查询接口中，out_trade_no、transaction_id至少填一个")
 
-        return self.fetch(url, data)
+        return self._fetch(url, data)
 
     def close_order(self, out_trade_no, **data):
         """
@@ -177,7 +177,7 @@ class WeixinPay(object):
 
         data.setdefault("out_trace_no", out_trade_no)
 
-        return self.fetch(url, data)
+        return self._fetch(url, data)
 
     def refund(self, **data):
         """
@@ -200,7 +200,7 @@ class WeixinPay(object):
         if "op_user_id" not in data:
             raise WeixinPayError("退款申请接口中，缺少必填参数op_user_id");
 
-        return self.fetch(url, data, True)
+        return self._fetch(url, data, True)
 
     def refund_query(self, **data):
         """
@@ -216,7 +216,7 @@ class WeixinPay(object):
                 and "transaction_id" not in data and "refund_id" not in data:
             raise WeixinPayError("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个")
 
-        return self.fetch(url, data)
+        return self._fetch(url, data)
 
     def download_bill(self, bill_date, bill_type="ALL", **data):
         """
@@ -231,4 +231,4 @@ class WeixinPay(object):
         if "bill_date" not in data:
             raise WeixinPayError("对账单接口中，缺少必填参数bill_date")
 
-        return self.fetch(url, data)
+        return self._fetch(url, data)
