@@ -9,10 +9,16 @@ import hashlib
 from datetime import datetime
 
 from .base import WeixinError
+
 try:
     from flask import request, Response
 except ImportError:
     request, Response = None, None
+
+try:
+    from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
+except Exception:
+    HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed = None, None, None
 
 try:
     from lxml import etree
@@ -212,6 +218,65 @@ class WeixinMsg(object):
                    'card_sku_remind']:
             return self.register('event', key)
         raise AttributeError('invalid attribute "' + key + '"')
+
+    def django_view_func(self):
+
+        def run(request):
+            if HttpResponse is None:
+                raise RuntimeError('django_view_func need Django be installed')
+            signature = request.GET.get('signature')
+
+            timestamp = request.GET.get('timestamp')
+            nonce = request.GET.get('nonce')
+            if not self.validate(signature, timestamp, nonce):
+                return HttpResponseForbidden('signature failed')
+            if request.method == 'GET':
+                echostr = request.args.get('echostr', '')
+                return HttpResponse(echostr)
+            elif request.method == "POST":
+                try:
+                    ret = self.parse(request.body)
+                except ValueError:
+                    return HttpResponseForbidden('invalid')
+
+                func = None
+                type = ret['type']
+                _registry = self._registry.get(type, dict())
+                if type == 'text':
+                    if ret['content'] in _registry:
+                        func = _registry[ret['content']]
+                elif type == 'event':
+                    if ret['event'].lower() in _registry:
+                        func = _registry[ret['event'].lower()]
+
+                if func is None and '*' in _registry:
+                    func = _registry['*']
+                if func is None and '*' in self._registry:
+                    func = self._registry.get('*', dict()).get('*')
+
+                text = ''
+                if func is None:
+                    text = 'failed'
+
+                if callable(func):
+                    text = func(**ret)
+
+                content = ''
+                if isinstance(text, basestring):
+                    if text:
+                        content = self.reply(
+                            username=ret['sender'],
+                            sender=ret['receiver'],
+                            content=text,
+                        )
+                elif isinstance(text, dict):
+                    text.setdefault('username', ret['sender'])
+                    text.setdefault('sender', ret['receiver'])
+                    content = self.reply(**text)
+
+                return HttpResponse(content, content_type='text/xml; charset=utf-8')
+            return HttpResponseNotAllowed(['GET', 'POST'])
+        return run
 
     def view_func(self):
         if request is None:
