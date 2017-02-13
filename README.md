@@ -131,13 +131,21 @@ weixin = Weixin(config)
 
 ### 微信消息
 
-实例只适用于flask框架，否则只能主动`parse`,`reply`，可以参考`weixin/msg.py`里面的`view_func`函数
+如果使用django，添加视图函数为
+
+```
+url(r'^/$', weixin.django_view_func, name='index'),
 
 ```
 
+如果为flask，添加视图函数为
+
+```
 app.add_url_rule("/", view_func=weixin.view_func)
+```
 
 
+```
 @weixin.all
 def all(**kwargs):
 	"""
