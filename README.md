@@ -134,7 +134,7 @@ weixin = Weixin(config)
 如果使用django，添加视图函数为
 
 ```
-url(r'^/$', weixin.django_view_func, name='index'),
+url(r'^/$', weixin.django_view_func(), name='index'),
 
 ```
 
