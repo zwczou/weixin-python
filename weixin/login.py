@@ -117,3 +117,33 @@ class WeixinLogin(object):
         兼容老版本0.3.0,与WeixinMP的user_info冲突
         """
         return self.userinfo(access_token, openid)
+    
+    
+        def __js_client_access_token(self, **kwargs):
+        """
+        获取微信公众号支付的access token
+        :param kwargs:
+        :return:
+        """
+        url = "https://api.weixin.qq.com/cgi-bin/token"
+
+        args = dict()
+        args.setdefault("grant_type", "client_credential")
+        args.setdefault("appid", self.app_id)
+        args.setdefault("secret", self.app_secret)
+
+        return self._get(url, args)
+
+    def js_client_ticket(self, **kwargs):
+        """
+        微信公众号支付的js的ticket
+        :param kwargs:
+        :return:
+        """
+
+        url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket"
+
+        result = self.__js_client_access_token()
+        args = dict()
+        args.setdefault("access_token", result.access_token)
+        args.setdefault("type", "jsapi")
