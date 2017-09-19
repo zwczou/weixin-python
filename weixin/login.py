@@ -147,3 +147,5 @@ class WeixinLogin(object):
         args = dict()
         args.setdefault("access_token", result.access_token)
         args.setdefault("type", "jsapi")
+        
+        return self._get(url, args)
