@@ -119,7 +119,7 @@ class WeixinLogin(object):
         return self.userinfo(access_token, openid)
     
     
-        def __js_client_access_token(self, **kwargs):
+    def __js_client_access_token(self, **kwargs):
         """
         获取微信公众号支付的access token
         :param kwargs:
