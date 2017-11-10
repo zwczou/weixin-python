@@ -175,7 +175,7 @@ class WeixinPay(object):
         """
         url = "https://api.mch.weixin.qq.com/pay/closeorder"
 
-        data.setdefault("out_trace_no", out_trade_no)
+        data.setdefault("out_trade_no", out_trade_no)
 
         return self._fetch(url, data)
 
