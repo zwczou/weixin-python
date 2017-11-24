@@ -27,7 +27,7 @@ class WeixinMPError(WeixinError):
 
 
 class WeixinMP(object):
-    api_uri = "https://api.weixin.qq.com/cgi-bin"
+    api_uri = "https://api.weixin.qq.com"
 
     def __init__(self, app_id, app_secret, ac_path=None, jt_path=None):
         self.app_id = app_id
@@ -51,20 +51,21 @@ class WeixinMP(object):
             raise WeixinMPError(msg)
         return data
 
-    def get(self, path, params=None, token=True):
-        url = "{0}{1}".format(self.api_uri, path)
+    def get(self, path, params=None, token=True, prefix="/cgi-bin"):
+        url = "{0}{1}{2}".format(self.api_uri, prefix, path)
         params = {} if not params else params
         token and params.setdefault("access_token", self.access_token)
         return self.fetch("GET", url, params)
 
-    def post(self, path, data, json_encode=True, token=True):
-        url = "{0}{1}".format(self.api_uri, path)
+    def post(self, path, data, prefix="/cgi-bin", json_encode=True, token=True):
+        url = "{0}{1}{2}".format(self.api_uri, prefix, path)
         params = {}
         token and params.setdefault("access_token", self.access_token)
         headers = {}
         if json_encode:
             data = json.dumps(data, ensure_ascii=False)
             headers["Content-Type"] = "application/json"
+        # print url, params, headers, data
         return self.fetch("POST", url, params=params, data=data, headers=headers)
 
     @property
@@ -282,3 +283,60 @@ class WeixinMP(object):
         """
         url = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
         return self.add_query(url, dict(ticket=ticket))
+
+    def shop_list(self, pageindex=1, pagesize=10):
+        """
+        门店列表
+        """
+        data = dict(pageindex=pageindex, pagesize=pagesize)
+        return self.post("/shop/list", data, prefix="/bizwifi")
+
+    def shop_get(self, shop_id):
+        """
+        查询门店Wi-Fi信息
+        """
+        return self.post("/shop/get", dict(shop_id=shop_id), prefix="/bizwifi")
+
+    def shop_update(self, shop_id, old_ssid, ssid, password=None):
+        """
+        修改门店网络信息
+        """
+        data = dict(shop_id=shop_id, old_ssid=old_ssid, ssid=ssid)
+        if password:
+            data.update(dict(password=password))
+        return self.post("/shop/update", data, prefix="/bizwifi")
+
+    def shop_clean(self, shop_id):
+        """
+        通过此接口清空门店的网络配置及所有设备，恢复空门店状态
+        """
+        return self.post("/shop/clean", dict(shop_id=shop_id), prefix="/bizwifi")
+
+    def apportal_register(self, shop_id, ssid, reset):
+        """
+        添加portal型设备
+        """
+        data = dict(shop_id=shop_id, ssid=ssid, reset=reset)
+        return self.post("/apportal/register", data)
+
+    def device_list(self, shop_id=None, pageindex=1, pagesize=10, prefix="/bizwifi"):
+        """
+        查询设备
+        """
+        data = dict(pageindex=pageindex, pagesize=pagesize)
+        if shop_id:
+            data.update(dict(shop_id=shop_id))
+        return self.post("/device/list", data, prefix="/bizwifi")
+
+    def device_delete(self, bssid):
+        """
+        删除设备
+        """
+        return self.post("/device/delete", dict(bssid=bssid), prefix="/bizwifi")
+
+    def qrcode_get(self, shop_id, ssid, img_id):
+        """
+        获取物料二维码
+        """
+        data = dict(shop_id=shop_id, ssid=ssid, img_id=img_id)
+        return self.post("/qrcode/get", data, prefix="/bizwifi")
