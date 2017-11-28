@@ -171,11 +171,11 @@ class WeixinMsg(object):
                                                    service_account)
 
         if type == 'image':
-            media_id = kwargs.get['media_id']
+            media_id = kwargs.get('media_id')
             return image_reply(username, sender, media_id)
 
         if type == 'voice':
-            media_id = kwargs.get['media_id']
+            media_id = kwargs.get('media_id')
             return voice_reply(username, sender, media_id)
 
         if type == 'video':
