@@ -27,9 +27,42 @@ class WeixinMPError(WeixinError):
 
 
 class WeixinMP(object):
+    """
+    微信公众号相关接口
+
+    当需要全局使用access token可以选择继承WeixinMP实现access_token
+
+        class WeixinMPSub(object):
+
+            def __init__(self, app_id, app_secret):
+                WeixinMP.__init__(app_id, app_secret)
+
+            @property
+            def access_token(self):
+                return requests.get("http://example.com").content
+
+
+        mp = WeixinMPSub("app_id", "app_secret")
+
+    也可以选择传入jt_callback
+
+        def get_access_token(mp):
+            return requests.get("http://example.com").content
+
+        WeixinMP("app_id", "app_secret", ac_callback=get_access_token)
+    """
+
     api_uri = "https://api.weixin.qq.com"
 
-    def __init__(self, app_id, app_secret, ac_path=None, jt_path=None):
+    def __init__(self, app_id, app_secret, ac_path=None, jt_path=None, ac_callback=None, jt_callback=None):
+        """
+        :param :app_id 微信app id
+        :param :app_secret 微信app secret
+        :param :ac_path access token 保存路径
+        :param :jt_path js ticket 保存路径
+        :param :ac_callback ac_callback
+        :param :jt_callback jt_callback
+        """
         self.app_id = app_id
         self.app_secret = app_secret
         self.session = requests.Session()
@@ -39,6 +72,8 @@ class WeixinMP(object):
             jt_path = os.path.join(DEFAULT_DIR, ".jsapi_ticket")
         self.ac_path = ac_path
         self.jt_path = jt_path
+        self.ac_callback = ac_callback
+        self.jt_callback = jt_callback
 
     def fetch(self, method, url, params=None, data=None, headers=None):
         req = requests.Request(method, url, params=params,
@@ -72,7 +107,14 @@ class WeixinMP(object):
     def access_token(self):
         """
         获取服务端凭证
+
+        当多台服务器需要共用access_token的时候
+        如果不想自己继承实现access_token，可以传入ac_callback()
+        接收一个WeixinMP对象作为参数
         """
+        if self.ac_callback and callable(self.ac_callback):
+            return self.ac_callback(self)
+
         timestamp = time.time()
         if not os.path.exists(self.ac_path) or \
                 int(os.path.getmtime(self.ac_path)) < timestamp:
@@ -90,7 +132,14 @@ class WeixinMP(object):
     def jsapi_ticket(self):
         """
         获取jsapi ticket
+
+        当多台服务器需要共用js_ticket的时候
+        如果不想自己继承实现js_ticket，可以传入jt_callback()
+        接收一个WeixinMP对象作为参数
         """
+        if self.jt_callback and callable(self.jt_callback):
+            return self.jt_callback(self)
+
         timestamp = time.time()
         if not os.path.exists(self.jt_path) or \
                 int(os.path.getmtime(self.jt_path)) < timestamp:
