@@ -94,6 +94,7 @@ class WeixinPay(object):
             resp = self.sess.post(url, data=self.to_xml(data), cert=(self.cert, self.key))
         else:
             resp = self.sess.post(url, data=self.to_xml(data))
+        print resp.content
         content = resp.content.decode("utf-8")
         if "return_code" in content:
             data = Map(self.to_dict(content))
@@ -197,8 +198,6 @@ class WeixinPay(object):
             raise WeixinPayError("退款申请接口中，缺少必填参数total_fee");
         if "refund_fee" not in data:
             raise WeixinPayError("退款申请接口中，缺少必填参数refund_fee");
-        if "op_user_id" not in data:
-            raise WeixinPayError("退款申请接口中，缺少必填参数op_user_id");
 
         return self._fetch(url, data, True)
 
