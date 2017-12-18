@@ -94,7 +94,6 @@ class WeixinPay(object):
             resp = self.sess.post(url, data=self.to_xml(data), cert=(self.cert, self.key))
         else:
             resp = self.sess.post(url, data=self.to_xml(data))
-        print resp.content
         content = resp.content.decode("utf-8")
         if "return_code" in content:
             data = Map(self.to_dict(content))
