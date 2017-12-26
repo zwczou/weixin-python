@@ -98,8 +98,9 @@ class WeixinMP(object):
         token and params.setdefault("access_token", self.access_token)
         headers = {}
         if json_encode:
-            data = json.dumps(data, ensure_ascii=False)
-            headers["Content-Type"] = "application/json"
+            # data = json.dumps(data, ensure_ascii=False)
+            data = json.dumps(data)
+            headers["Content-Type"] = "application/json;charset=UTF-8"
         # print url, params, headers, data
         return self.fetch("POST", url, params=params, data=data, headers=headers)
 
@@ -126,7 +127,7 @@ class WeixinMP(object):
             with open(self.ac_path, 'wb') as fp:
                 fp.write(data.access_token.encode("utf-8"))
             os.utime(self.ac_path, (timestamp, timestamp + data.expires_in - 600))
-        return open(self.ac_path).read()
+        return open(self.ac_path).read().strip()
 
     @property
     def jsapi_ticket(self):
@@ -389,3 +390,33 @@ class WeixinMP(object):
         """
         data = dict(shop_id=shop_id, ssid=ssid, img_id=img_id)
         return self.post("/qrcode/get", data, prefix="/bizwifi")
+
+    def get_all_private_template(self):
+        """
+        获取所有私有模板列表
+        """
+        return self.get("/template/get_all_private_template")
+
+    def del_private_template(self, template_id):
+        """
+        删除私有模板
+        """
+        return self.post("/template/del_private_template", dict(template_id=template_id))
+
+    def template_send(self, template_id, touser, data, url=None, miniprogram=None, **kwargs):
+        """
+        发送模板消息
+
+        :paramas template_id: 模板id
+        :params touser: openid
+        :params data: 模板消息对应的内容跟颜色
+        :params url: 跳转地址
+        :parms miniprogram: 小程序跳转相关
+        """
+        kwargs.setdefault("template_id", template_id)
+        kwargs.setdefault("touser", touser)
+        kwargs.setdefault("data", data)
+        url and kwargs.setdefault("url", url)
+        miniprogram and kwargs.setdefault("miniprogram", miniprogram)
+        # print kwargs
+        return self.post("/message/template/send", kwargs)
