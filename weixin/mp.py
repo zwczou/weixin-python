@@ -169,7 +169,7 @@ class WeixinMP(object):
         raw = [(k, kwargs[k]) for k in sorted(kwargs.keys())]
         s = "&".join("=".join(kv) for kv in raw if kv[1])
         sign = hashlib.sha1(s.encode("utf-8")).hexdigest().lower()
-        return Map(sign=sign, timestamp=timestamp, noncestr=nonce_str)
+        return Map(sign=sign, timestamp=timestamp, noncestr=nonce_str, appId=self.app_id)
 
     def groups_create(self, name):
         """
