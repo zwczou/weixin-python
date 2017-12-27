@@ -41,6 +41,10 @@
 
 `sudo easy_install weixin-python`
 
+安装开发版本
+
+`sudo pip install git+https://github.com/zwczou/weixin-python@dev`
+
 ## 功能
 
 * 微信登陆
