@@ -1,9 +1,19 @@
 # -*- coding: utf-8 -*-
 
 
+import re
+import ast
 import os
 
 from setuptools import setup, find_packages
+
+
+_version_re = re.compile(r'__version__\s+=\s+(.*)')
+
+with open('weixin/__init__.py', 'rb') as f:
+    version = str(ast.literal_eval(_version_re.search(
+        f.read().decode('utf-8')
+    ).group(1)))
 
 
 def fread(fname):
@@ -18,7 +28,7 @@ setup(
     long_description=fread('README.md'),
     license='BSD',
     packages=find_packages(),
-    version='0.4.6',
+    version=version,
     author='zwczou',
     author_email='zwczou@gmail.com',
     url='https://github.com/zwczou/weixin-python',
