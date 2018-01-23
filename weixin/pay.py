@@ -133,7 +133,8 @@ class WeixinPay(object):
         if data["trade_type"] == "NATIVE" and "product_id" not in data:
             raise WeixinPayError("trade_type为NATIVE时，product_id为必填参数")
         data.setdefault("notify_url", self.notify_url)
-        data.setdefault("spbill_create_ip", self.remote_addr)
+        if "spbill_create_ip" not in data:
+            data.setdefault("spbill_create_ip", self.remote_addr)
 
         raw = self._fetch(url, data)
         return raw
