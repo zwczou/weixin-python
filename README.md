@@ -181,11 +181,11 @@ def subscribe(**kwargs):
 	"""
     print kwargs
     return "欢迎订阅我们的公众号"
-````
+```
 
 # 微信登陆
 
-````
+```
 @app.route("/login")
 def login():
     """登陆跳转地址"""
