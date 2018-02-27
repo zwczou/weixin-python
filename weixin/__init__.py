@@ -12,7 +12,7 @@ from collections import namedtuple
 
 __all__ = ("Weixin")
 __author__ = "Weicheng Zou <zwczou@gmail.com>"
-__version__ = "0.5.2"
+__version__ = "0.5.3"
 
 
 StandaloneApplication = namedtuple("StandaloneApplication", ["config"])

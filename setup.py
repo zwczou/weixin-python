@@ -25,14 +25,14 @@ def fread(fname):
 setup(
     name='weixin-python',
     description='Weixin for Python',
-    long_description=fread('README.md'),
+    long_description=fread('docs/quickstart.rst'),
     license='BSD',
     packages=find_packages(),
     version=version,
     author='zwczou',
     author_email='zwczou@gmail.com',
     url='https://github.com/zwczou/weixin-python',
-    keywords=['weixin', 'weixin pay', 'weixin login'],
+    keywords=['weixin', 'weixin pay', 'weixin login', 'weixin mp', 'weixin python'],
     zip_safe=False,
     platforms='any',
     install_requires=[
