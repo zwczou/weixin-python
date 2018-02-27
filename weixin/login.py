@@ -117,3 +117,15 @@ class WeixinLogin(object):
         兼容老版本0.3.0,与WeixinMP的user_info冲突
         """
         return self.userinfo(access_token, openid)
+
+    def jscode2session(self, js_code):
+        """
+        小程序获取 session_key 和 openid
+        """
+        url = "https://api.weixin.qq.com/sns/jscode2session"
+        args = dict()
+        args.setdefault("appid", self.app_id)
+        args.setdefault("secret", self.app_secret)
+        args.setdefault("js_code", js_code)
+        args.setdefault("grant_type", "authorization_code")
+        return self._get(url, args)
