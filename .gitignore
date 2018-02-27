@@ -2,4 +2,5 @@
 *.pyc
 *~
 build
+_build
 dist
