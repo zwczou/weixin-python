@@ -183,7 +183,7 @@ def subscribe(**kwargs):
     return "欢迎订阅我们的公众号"
 ```
 
-# 微信登陆
+### 微信登陆
 
 ```
 @app.route("/login")
@@ -214,7 +214,7 @@ def authorized():
     return resp
 ```
 
-# 微信支付
+### 微信支付
 
 注意: 微信网页支付的timestamp参数必须为字符串
 
