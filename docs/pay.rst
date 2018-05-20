@@ -54,7 +54,7 @@
 
 -  out_trade_no 商户订单号
 -  body 商品描述
--  total_fee 商品描述
+-  total_fee 商品费用（分）
 -  openid 用户标识
 
 返回参数
