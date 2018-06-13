@@ -34,7 +34,7 @@
 条件参数
 
 -  openid 如果\ ``trade_type``\ 为\ ``JSAPI``\ 时必须
--  product_id 如果\ ``type_type``\ 为\ ``NATIVE``\ 时必须
+-  product_id 如果\ ``trade_type``\ 为\ ``NATIVE``\ 时必须
 
 举例
 
