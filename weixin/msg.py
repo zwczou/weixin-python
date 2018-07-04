@@ -20,12 +20,7 @@ try:
 except Exception:
     HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed = None, None, None
 
-try:
-    from lxml import etree
-except ImportError:
-    from xml.etree import cElementTree as etree
-except ImportError:
-    from xml.etree import ElementTree as etree
+from lxml import etree
 
 
 __all__ = ("WeixinMsgError", "WeixinMsg")
