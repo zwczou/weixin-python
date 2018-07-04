@@ -79,7 +79,8 @@ class WeixinPay(object):
 
     def to_dict(self, content):
         raw = {}
-        root = etree.fromstring(content.encode("utf-8"))
+        root = etree.fromstring(content.encode("utf-8"),
+                                parser=etree.XMLParser(resolve_entities=False))
         for child in root:
             raw[child.tag] = child.text
         return raw
