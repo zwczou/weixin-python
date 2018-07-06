@@ -33,6 +33,7 @@ class WeixinPayError(WeixinError):
 
 
 class WeixinPay(object):
+    PAY_HOST = "https://api.mch.weixin.qq.com"
 
     def __init__(self, app_id, mch_id, mch_key, notify_url, key=None, cert=None):
         self.app_id = app_id
@@ -111,7 +112,7 @@ class WeixinPay(object):
         app_id, mchid, nonce_str自动填写
         spbill_create_ip 在flask框架下可以自动填写, 非flask框架需要主动传入此参数
         """
-        url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
+        url = self.PAY_HOST + "/pay/unifiedorder"
 
         # 必填参数
         if "out_trade_no" not in data:
@@ -157,7 +158,7 @@ class WeixinPay(object):
         out_trade_no, transaction_id至少填一个
         appid, mchid, nonce_str不需要填入
         """
-        url = "https://api.mch.weixin.qq.com/pay/orderquery"
+        url = self.PAY_HOST + "/pay/orderquery"
 
         if "out_trade_no" not in data and "transaction_id" not in data:
             raise WeixinPayError("订单查询接口中，out_trade_no、transaction_id至少填一个")
@@ -170,7 +171,7 @@ class WeixinPay(object):
         out_trade_no必填
         appid, mchid, nonce_str不需要填入
         """
-        url = "https://api.mch.weixin.qq.com/pay/closeorder"
+        url = self.PAY_HOST + "/pay/closeorder"
 
         data.setdefault("out_trade_no", out_trade_no)
 
@@ -183,9 +184,9 @@ class WeixinPay(object):
         out_refund_no、total_fee、refund_fee、op_user_id为必填参数
         appid、mchid、nonce_str不需要填入
         """
+        url = self.PAY_HOST + "/secapi/pay/refund"
         if not self.key or not self.cert:
             raise WeixinError("退款申请接口需要双向证书")
-        url = "https://api.mch.weixin.qq.com/secapi/pay/refund"
         if "out_trade_no" not in data and "transaction_id" not in data:
             raise WeixinPayError("退款申请接口中，out_trade_no、transaction_id至少填一个")
         if "out_refund_no" not in data:
@@ -206,7 +207,7 @@ class WeixinPay(object):
         out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个
         appid、mchid、nonce_str不需要填入
         """
-        url = "https://api.mch.weixin.qq.com/pay/refundquery"
+        url = self.PAY_HOST + "/pay/refundquery"
         if "out_refund_no" not in data and "out_trade_no" not in data \
                 and "transaction_id" not in data and "refund_id" not in data:
             raise WeixinPayError("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个")
@@ -219,7 +220,7 @@ class WeixinPay(object):
         bill_date、bill_type为必填参数
         appid、mchid、nonce_str不需要填入
         """
-        url = "https://api.mch.weixin.qq.com/pay/downloadbill"
+        url = self.PAY_HOST + "/pay/downloadbill"
         data.setdefault("bill_date", bill_date)
         data.setdefault("bill_type", bill_type)
 
