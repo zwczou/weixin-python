@@ -228,3 +228,49 @@ class WeixinPay(object):
             raise WeixinPayError("对账单接口中，缺少必填参数bill_date")
 
         return self._fetch(url, data)
+
+    def pay_individual(self, **data):
+        """
+        企业付款到零钱
+        """
+        url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers"
+        if not self.key or not self.cert:
+            raise WeixinPayError("企业接口需要双向证书")
+        if "partner_trade_no" not in data:
+            raise WeixinPayError("企业付款接口中, 缺少必要的参数partner_trade_no")
+        if "openid" not in data:
+            raise WeixinPayError("企业付款接口中，缺少必填参数openid")
+        if "amount" not in data:
+            raise WeixinPayError("企业付款接口中，缺少必填参数amount")
+        if "desc" not in data:
+            raise WeixinPayError("企业付款接口中，缺少必填参数desc")
+        data.setdefault('check_name', 'NO_CHECK')
+        return self._fetch_pay(url, data, True)
+
+    def pay_individual_query(self, **data):
+        """企业付款查询"""
+        url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo"
+        if not self.key or not self.cert:
+            raise WeixinPayError("企业接口需要双向证书'")
+        if "partner_trade_no" not in data:
+            raise WeixinPayError("企业付款接口中, 缺少必要的参数partner_trade_no")
+        return self._fetch(url, data, True)
+
+    def _fetch_pay(self, url, data, use_cert=False):
+        data.setdefault("mch_appid", self.app_id)
+        data.setdefault("mchid", self.mch_id)
+        data.setdefault("nonce_str", self.nonce_str)
+        data.setdefault("sign", self.sign(data))
+        if use_cert:
+            resp = self.sess.post(url, data=self.to_xml(data), cert=(self.cert, self.key))
+        else:
+            resp = self.sess.post(url, data=self.to_xml(data))
+        content = resp.content.decode("utf-8")
+        if "return_code" in content:
+            data = Map(self.to_dict(content))
+            if data.return_code == FAIL:
+                raise WeixinPayError(data.return_msg)
+            if "result_code" in content and data.result_code == FAIL:
+                raise WeixinPayError(data.err_code_des)
+            return data
+        return content

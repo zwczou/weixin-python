@@ -179,6 +179,36 @@ out_refund_no 商户退款单号 \* refund_id 微信退款单号
 
     print pay.download_bill('20140603')
 
+
+企业付款
+~~~~~~~~
+
+必填参数
+
+-  openid 用户身份, amount 金额(分), partner_trade_no 商户订单号  desc企业付款备注
+
+举例
+
+::
+
+    raw = self.pay.pay_individual(openid=openid, amount=amount, partner_trade_no=partner_trade_no, desc=desc)
+    print raw
+
+
+查询企业付款
+~~~~~~~~
+
+必填参数
+
+-  partner_trade_no 商户订单号
+
+举例
+
+::
+
+    raw = self.pay.pay_individual_query(partner_trade_no=partner_trade_no)
+    print raw
+
 用法
 ----
 
