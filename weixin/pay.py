@@ -233,9 +233,9 @@ class WeixinPay(object):
         """
         企业付款到零钱
         """
-        if not self.key or not self.cert:
-            raise WeixinError("企业接口需要双向证书")
         url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers"
+        if not self.key or not self.cert:
+            raise WeixinPayError("企业接口需要双向证书")
         if "partner_trade_no" not in data:
             raise WeixinPayError("企业付款接口中, 缺少必要的参数partner_trade_no")
         if "openid" not in data:
@@ -249,9 +249,9 @@ class WeixinPay(object):
 
     def pay_individual_query(self, **data):
         """企业付款查询"""
-        if not self.key or not self.cert:
-            raise WeixinError("企业接口需要双向证书")
         url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo"
+        if not self.key or not self.cert:
+            raise WeixinPayError("企业接口需要双向证书'")
         if "partner_trade_no" not in data:
             raise WeixinPayError("企业付款接口中, 缺少必要的参数partner_trade_no")
         return self._fetch(url, data, True)
