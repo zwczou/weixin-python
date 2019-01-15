@@ -247,11 +247,11 @@ class WeixinPay(object):
         data.setdefault('check_name', 'NO_CHECK')
         return self._fetch_pay(url, data, True)
 
-      def pay_individual_to_card(self, **data):
+    def pay_individual_to_card(self, **data):
         """企业付款到银行卡"""
+        url = 'https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank'
         if not self.key or not self.cert:
             raise WeixinPayError("企业接口需要双向证书")
-        url = 'https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank'
         if "partner_trade_no" not in data:
             raise WeixinPayError("企业付款接口中, 缺少必要的参数partner_trade_no")
         if "enc_bank_no" not in data:
@@ -264,8 +264,17 @@ class WeixinPay(object):
             raise WeixinPayError("企业付款接口中，缺少必填参数amount")
         return self._fetch(url, data, True)
 
+    def pay_individual_bank_query(self, **data):
+        """企业付款到银行卡查询"""
+        url = "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank"
+        if not self.key or not self.cert:
+            raise WeixinPayError("企业接口需要双向证书'")
+        if "partner_trade_no" not in data:
+            raise WeixinPayError("企业付款接口中, 缺少必要的参数partner_trade_no")
+        return self._fetch(url, data, True)
+
     def pay_individual_query(self, **data):
-        """企业付款查询"""
+        """企业付款到零钱查询"""
         url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo"
         if not self.key or not self.cert:
             raise WeixinPayError("企业接口需要双向证书'")
