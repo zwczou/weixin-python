@@ -227,7 +227,7 @@ class WeixinMsg(object):
             if not self.validate(signature, timestamp, nonce):
                 return HttpResponseForbidden('signature failed')
             if request.method == 'GET':
-                echostr = request.args.get('echostr', '')
+                echostr = request.GET.get('echostr', '')
                 return HttpResponse(echostr)
             elif request.method == "POST":
                 try:
