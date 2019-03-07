@@ -20,12 +20,7 @@ try:
 except Exception:
     HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed = None, None, None
 
-try:
-    from lxml import etree
-except ImportError:
-    from xml.etree import cElementTree as etree
-except ImportError:
-    from xml.etree import ElementTree as etree
+from lxml import etree
 
 
 __all__ = ("WeixinMsgError", "WeixinMsg")
@@ -64,7 +59,8 @@ class WeixinMsg(object):
 
     def parse(self, content):
         raw = {}
-        root = etree.fromstring(content)
+        root = etree.fromstring(content,
+                                parser=etree.XMLParser(resolve_entities=False))
         for child in root:
             raw[child.tag] = child.text
 
@@ -231,7 +227,7 @@ class WeixinMsg(object):
             if not self.validate(signature, timestamp, nonce):
                 return HttpResponseForbidden('signature failed')
             if request.method == 'GET':
-                echostr = request.args.get('echostr', '')
+                echostr = request.GET.get('echostr', '')
                 return HttpResponse(echostr)
             elif request.method == "POST":
                 try:
