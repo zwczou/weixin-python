@@ -43,9 +43,9 @@
 
 安装开发版本
 
-# 当前版本v0.5.5
+当前版本v0.5.5
 
-`sudo pip install git+https://github.com/zwczou/weixin-python@v1.0
+`sudo pip install git+https://github.com/zwczou/weixin-python@v1.0`
 
 ## 功能
 
