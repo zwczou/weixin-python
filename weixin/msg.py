@@ -20,6 +20,12 @@ try:
 except Exception:
     HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed = None, None, None
 
+try:
+    from aiohttp import web
+except ImportError:
+    aio_request = None
+
+
 from lxml import etree
 
 
@@ -273,6 +279,65 @@ class WeixinMsg(object):
                 return HttpResponse(content, content_type='text/xml; charset=utf-8')
             return HttpResponseNotAllowed(['GET', 'POST'])
         return run
+
+    async def aio_view_func(self, request: web.Request):
+        if aio_request is None:
+            raise RuntimeError('view_func need Flask be installed')
+
+        signature = request.query['signature']
+        timestamp = request.query['timestamp']
+        nonce = request.query['nonce']
+
+        if not self.validate(signature, timestamp, nonce):
+            return web.Response(text='signature failed', status=400)
+        if request.method == 'GET':
+            echostr = request.query['echostr']
+            return web.Response(text=echostr)
+        if request.method != 'POST':
+            return web.Response(text='invalid method', status=400)
+
+        try:
+            ret = self.parse(await request.text())
+        except ValueError:
+            return web.Response(text='invalid value', status=400)
+
+        func = None
+        content_type = ret['type']
+        _registry = self._registry.get(content_type, dict())
+        if content_type == 'text':
+            if ret['content'] in _registry:
+                func = _registry[ret['content']]
+        elif content_type == 'event':
+            if ret['event'].lower() in _registry:
+                func = _registry[ret['event'].lower()]
+
+        if func is None and '*' in _registry:
+            func = _registry['*']
+        if func is None and '*' in self._registry:
+            func = self._registry.get('*', dict()).get('*')
+
+        content = ''
+        if func is None:
+            content = 'failed'
+
+        if callable(func):
+            content = func(**ret)
+
+        res_content = ''
+        if isinstance(content, str):
+            if content:
+                res_content = self.reply(
+                    username=ret['sender'],
+                    sender=ret['receiver'],
+                    content=content,
+                )
+        elif isinstance(content, dict):
+            content.setdefault('username', ret['sender'])
+            content.setdefault('sender', ret['receiver'])
+            res_content = self.reply(**content)
+
+        return web.Response(text=res_content, content_type='text/xml', charset='utf-8')
+
 
     def view_func(self):
         if request is None:
