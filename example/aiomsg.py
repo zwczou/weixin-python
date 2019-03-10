@@ -1,19 +1,17 @@
 import asyncio
-import aiohttp_cors
 
-from config import *
 from aiohttp import web
 from weixin.msg import WeixinMsg
 
 app = web.Application(loop=asyncio.get_event_loop())
 msg = WeixinMsg("qwertyuiop", None, 0)
 
-app.add_routes([web.get('/api/wx_msg', res_msg),
-                web.post('/api/wx_msg', res_msg)])
-
 async def res_msg(request):
     print('text: ', await request.text())
     return await msg.aio_view_func(request)
+
+app.add_routes([web.get('/api/wx_msg', res_msg),
+                web.post('/api/wx_msg', res_msg)])
 
 @msg.text()
 def msg_text(**kwargs):
@@ -40,4 +38,4 @@ def msg_image(**kwargs):
 
 
 if __name__ == "__main__":
-    web.run_app(app, port=5000)
+    web.run_app(app, port=80)

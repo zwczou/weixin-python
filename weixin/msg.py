@@ -22,6 +22,7 @@ except Exception:
 
 try:
     from aiohttp import web
+    aio_request = 1
 except ImportError:
     aio_request = None
 
