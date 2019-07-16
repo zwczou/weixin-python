@@ -332,7 +332,7 @@ class WeixinMP(object):
         显示qrcode
         """
         url = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
-        return self.add_query(url, dict(ticket=ticket))
+        return self.post(url, dict(ticket=ticket))
 
     def shop_list(self, pageindex=1, pagesize=10):
         """

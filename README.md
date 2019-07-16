@@ -41,11 +41,7 @@
 
 `sudo easy_install weixin-python`
 
-安装开发版本
-
-当前版本v0.5.5
-
-`sudo pip install git+https://github.com/zwczou/weixin-python@v1.0`
+当前版本v0.5.7
 
 ## 功能
 
