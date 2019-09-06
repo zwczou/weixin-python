@@ -151,7 +151,7 @@ class WeixinPay(object):
                    nonceStr=nonce_str, package=package, signType="MD5")
         sign = self.sign(raw)
         return dict(package=package, appId=self.app_id, signType="MD5",
-                    timeStamp=timestamp, nonceStr=nonce_str, sign=sign)
+                    timeStamp=timestamp, nonceStr=nonce_str, paySign=sign)
 
     def order_query(self, **data):
         """
