@@ -254,12 +254,12 @@ class WeixinMP(object):
         args = dict(openid=openid, lang="zh_CN")
         return self.get("/user/info", args)
 
-    def user_info_batchget(self, *openid):
+    def user_info_batchget(self, *openids):
         """
         批量获取用户信息
         """
         user_list = []
-        for id in openid:
+        for openid in openids:
             user_list.append(dict(openid=openid, lang="zh_CN"))
         data = dict(user_list=user_list)
         return self.post("/user/info/batchget", data)
