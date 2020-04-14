@@ -112,7 +112,7 @@ app.debug = True
 
 # 具体导入配
 # 根据需求导入仅供参考
-app.config.fromobject(dict(WEIXIN_APP_ID='', WEIXIN_APP_SECRET=''))
+app.config.from_object(dict(WEIXIN_APP_ID='', WEIXIN_APP_SECRET=''))
 
 
 # 初始化微信
