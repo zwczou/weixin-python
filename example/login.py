@@ -35,5 +35,5 @@ def authorized():
     openid = data.openid
     resp = redirect(next)
     expires = datetime.now() + timedelta(days=1)
-    resp.set_cookie("openid", openid, expires=expires)
+    resp.set_cookie("openid", openid, expires=expires, secure=True, httponly=True, samesite='Lax')
     return resp
