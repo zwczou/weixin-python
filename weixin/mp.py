@@ -87,12 +87,19 @@ class WeixinMP(object):
         return data
 
     def get(self, path, params=None, token=True, prefix="/cgi-bin"):
-        url = "{0}{1}{2}".format(self.api_uri, prefix, path)
+        if path.startswith("http"):
+            url = path
+        else:
+            url = "{0}{1}{2}".format(self.api_uri, prefix, path)
         params = {} if not params else params
         token and params.setdefault("access_token", self.access_token)
         return self.fetch("GET", url, params)
 
     def post(self, path, data, prefix="/cgi-bin", json_encode=True, token=True):
+        if path.startswith("http"):
+            url = path
+        else:
+            url = "{0}{1}{2}".format(self.api_uri, prefix, path)
         url = "{0}{1}{2}".format(self.api_uri, prefix, path)
         params = {}
         token and params.setdefault("access_token", self.access_token)
@@ -332,7 +339,7 @@ class WeixinMP(object):
         显示qrcode
         """
         url = "https://mp.weixin.qq.com/cgi-bin/showqrcode"
-        return self.post(url, dict(ticket=ticket))
+        return self.get(url, dict(ticket=ticket))
 
     def shop_list(self, pageindex=1, pagesize=10):
         """
