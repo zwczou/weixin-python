@@ -113,7 +113,7 @@ class WeixinPay(object):
         app_id, mchid, nonce_str自动填写
         spbill_create_ip 在flask框架下可以自动填写, 非flask框架需要主动传入此参数
         """
-        url = self.PAY_HOST + "/pay/unifiedorder"
+        url = self.PAY_HOST + '/pay/unifiedorder'
 
         # 必填参数
         if "out_trade_no" not in data:
@@ -159,7 +159,7 @@ class WeixinPay(object):
         out_trade_no, transaction_id至少填一个
         appid, mchid, nonce_str不需要填入
         """
-        url = self.PAY_HOST + "/pay/orderquery"
+        url = self.PAY_HOST + '/pay/orderquery'
 
         if "out_trade_no" not in data and "transaction_id" not in data:
             raise WeixinPayError("订单查询接口中，out_trade_no、transaction_id至少填一个")
@@ -172,7 +172,7 @@ class WeixinPay(object):
         out_trade_no必填
         appid, mchid, nonce_str不需要填入
         """
-        url = self.PAY_HOST + "/pay/closeorder"
+        url = self.PAY_HOST + '/pay/closeorder'
 
         data.setdefault("out_trade_no", out_trade_no)
 
@@ -185,7 +185,7 @@ class WeixinPay(object):
         out_refund_no、total_fee、refund_fee、op_user_id为必填参数
         appid、mchid、nonce_str不需要填入
         """
-        url = self.PAY_HOST + "/secapi/pay/refund"
+        url = self.PAY_HOST + '/secapi/pay/refund'
         if not self.key or not self.cert:
             raise WeixinPayError("退款申请接口需要双向证书")
         if "out_trade_no" not in data and "transaction_id" not in data:
@@ -208,7 +208,7 @@ class WeixinPay(object):
         out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个
         appid、mchid、nonce_str不需要填入
         """
-        url = self.PAY_HOST + "/pay/refundquery"
+        url = self.PAY_HOST + '/pay/refundquery'
         if "out_refund_no" not in data and "out_trade_no" not in data \
                 and "transaction_id" not in data and "refund_id" not in data:
             raise WeixinPayError("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个")
@@ -221,7 +221,7 @@ class WeixinPay(object):
         bill_date、bill_type为必填参数
         appid、mchid、nonce_str不需要填入
         """
-        url = self.PAY_HOST + "/pay/downloadbill"
+        url = self.PAY_HOST + '/pay/downloadbill'
         data.setdefault("bill_date", bill_date)
         data.setdefault("bill_type", bill_type)
 
@@ -234,7 +234,7 @@ class WeixinPay(object):
         """
         企业付款到零钱
         """
-        url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers"
+        url = self.PAY_HOST + '/mmpaymkttransfers/promotion/transfers'
         if not self.key or not self.cert:
             raise WeixinPayError("企业接口需要双向证书")
         if "partner_trade_no" not in data:
@@ -250,7 +250,7 @@ class WeixinPay(object):
 
     def pay_individual_to_card(self, **data):
         """企业付款到银行卡"""
-        url = 'https://api.mch.weixin.qq.com/mmpaysptrans/pay_bank'
+        url = self.PAY_HOST + '/mmpaysptrans/pay_bank'
         if not self.key or not self.cert:
             raise WeixinPayError("企业接口需要双向证书")
         if "partner_trade_no" not in data:
@@ -267,7 +267,7 @@ class WeixinPay(object):
 
     def pay_individual_bank_query(self, **data):
         """企业付款到银行卡查询"""
-        url = "https://api.mch.weixin.qq.com/mmpaysptrans/query_bank"
+        url = self.PAY_HOST + '/mmpaysptrans/query_bank'
         if not self.key or not self.cert:
             raise WeixinPayError("企业接口需要双向证书'")
         if "partner_trade_no" not in data:
@@ -276,7 +276,7 @@ class WeixinPay(object):
 
     def pay_individual_query(self, **data):
         """企业付款到零钱查询"""
-        url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo"
+        url = self.PAY_HOST + '/mmpaymkttransfers/gettransferinfo'
         if not self.key or not self.cert:
             raise WeixinPayError("企业接口需要双向证书'")
         if "partner_trade_no" not in data:
