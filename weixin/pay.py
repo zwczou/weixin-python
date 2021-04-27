@@ -187,7 +187,7 @@ class WeixinPay(object):
         """
         url = self.PAY_HOST + "/secapi/pay/refund"
         if not self.key or not self.cert:
-            raise WeixinError("退款申请接口需要双向证书")
+            raise WeixinPayError("退款申请接口需要双向证书")
         if "out_trade_no" not in data and "transaction_id" not in data:
             raise WeixinPayError("退款申请接口中，out_trade_no、transaction_id至少填一个")
         if "out_refund_no" not in data:
