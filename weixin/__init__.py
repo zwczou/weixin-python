@@ -10,7 +10,7 @@ from .base import WeixinError, Map
 from collections import namedtuple
 
 
-__all__ = ("Weixin")
+__all__ = ("Weixin",)
 __author__ = "Weicheng Zou <zwczou@gmail.com>"
 __version__ = "0.5.7"
 
