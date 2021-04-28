@@ -21,7 +21,7 @@
 初始化
 ~~~~~~
 
-::
+.. code-block:: python
 
     from weixin import WeixinMsg
     # from weixin.msg import WeixinMsg
@@ -54,7 +54,7 @@
 -  链接类型 ``@msg.link``
 -  事件类型 ``@msg.event``
 
-::
+.. code-block:: python
 
     @msg.all
     def all(**kwargs):
@@ -63,7 +63,7 @@
 监听文本消息
 ^^^^^^^^^^^^
 
-::
+.. code-block:: python
 
     @msg.text()
     def text(**kwargs):
@@ -72,7 +72,7 @@
 监听具体的文本消息
 ^^^^^^^^^^^^^^^^^^
 
-::
+.. code-block:: python
 
     @msg.text("help")
     def help(**kwargs):
@@ -81,7 +81,7 @@
 监听图片消息
 ^^^^^^^^^^^^
 
-::
+.. code-block:: python
 
     @msg.image
     def image():
@@ -101,7 +101,7 @@
 监听订阅事件
 ^^^^^^^^^^^^
 
-::
+.. code-block:: python
 
     @msg.subscribe
     def subscribe():
@@ -110,7 +110,7 @@
 监听取消订阅事件
 ^^^^^^^^^^^^^^^^
 
-::
+.. code-block:: python
 
     @msg.unsubscribe
     def unsubscribe():
@@ -119,7 +119,7 @@
 监听点击事件
 ~~~~~~~~~~~~
 
-::
+.. code-block:: python
 
     @msg.click
     def click(**kwargs):
@@ -144,7 +144,7 @@
 
 默认类型为文本消息
 
-::
+.. code-block:: python
 
     @msg.click
     def click(**kwargs):
@@ -155,7 +155,7 @@
 
 会自动填充发送者跟接受者
 
-::
+.. code-block:: python
 
     @msg.click
     def click():
@@ -164,7 +164,7 @@
 使用\ ``reply``\ 函数
 ^^^^^^^^^^^^^^^^^^^^^
 
-::
+.. code-block:: python
 
     @msg.click
     def click(**kwargs):
@@ -173,7 +173,7 @@
 用法
 ~~~~
 
-::
+.. code-block:: python
 
     # -*- coding: utf-8 -*-
 

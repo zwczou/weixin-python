@@ -7,7 +7,7 @@
 初始化
 ~~~~~~
 
-::
+.. code-block:: python
 
     from weixin.mp import WeixinMP
 
@@ -16,28 +16,28 @@
 获取公众号唯一凭证
 ~~~~~~~~~~~~~~~~~~
 
-::
+.. code-block:: python
 
     print mp.access_token
 
 获取jsticket
 ~~~~~~~~~~~~
 
-::
+.. code-block:: python
 
     print mp.jsapi_ticket
 
 jsapi签名，比如扫码或者分享
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+.. code-block:: python
 
     mp.jsapi_sign(url=request.url)
 
 创建临时qrcode
 ~~~~~~~~~~~~~~
 
-::
+.. code-block:: python
 
     data = mp.qrcode_create(123, 30)
     print mp.qrcode_show(data.ticket)
@@ -45,7 +45,7 @@ jsapi签名，比如扫码或者分享
 创建永久性qrcode
 ~~~~~~~~~~~~~~~~
 
-::
+.. code-block:: python
 
     # scene_id类型
     mp.qrcode_create_limit(123)
@@ -55,14 +55,14 @@ jsapi签名，比如扫码或者分享
 长链接变短链接
 ~~~~~~~~~~~~~~
 
-::
+.. code-block:: python
 
     mp.shorturl("http://example.com/test")
 
 菜单管理
 ~~~~~~~~
 
-::
+.. code-block:: python
 
     # 获取菜单
     try:
