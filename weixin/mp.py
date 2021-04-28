@@ -315,20 +315,20 @@ class WeixinMP(object):
         )
         return self.post("/qrcode/create", data)
 
-    def qrcode_create_limit(self, input):
+    def qrcode_create_limit(self, scene):
         """
         创建qrcode限制方式
         """
         data = dict()
-        if isinstance(input, int):
+        if isinstance(scene, int):
             data["action_name"] = "QR_LIMIT_SCENE"
             data["action_info"] = dict(scene=dict(
-                scene_id=input,
+                scene_id=scene,
             ))
-        elif isinstance(input, str):
+        elif isinstance(scene, str):
             data["action_name"] = "QR_LIMIT_STR_SCENE"
             data["action_info"] = dict(scene=dict(
-                scene_str=input,
+                scene_str=scene,
             ))
         else:
             raise ValueError("invalid type")
