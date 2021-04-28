@@ -41,6 +41,9 @@
 
 `sudo easy_install weixin-python`
 
+安装最新版本
+`pip3 install git+https://github.com/zwczou/weixin-python`
+
 当前版本v0.5.7
 
 ## 功能
@@ -231,7 +234,7 @@ def pay_jsapi():
         return e.message, 400
 
 
-@app.route("/pay/notify")
+@app.route("/pay/notify, methods=['POST'])
 def pay_notify():
     """
     微信异步通知
