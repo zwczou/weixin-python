@@ -8,7 +8,7 @@ import hashlib
 
 from datetime import datetime
 
-from .base import WeixinError
+from .base import WeixinError, basestring
 
 try:
     from flask import request, Response
