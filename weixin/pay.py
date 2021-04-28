@@ -45,6 +45,10 @@ class WeixinPay(object):
         self.sess = requests.Session()
 
     @property
+    def timestamp(self):
+        return str(int(time.time()))
+
+    @property
     def remote_addr(self):
         if request is not None:
             return request.remote_addr
@@ -145,13 +149,13 @@ class WeixinPay(object):
         kwargs.setdefault("trade_type", "JSAPI")
         raw = self.unified_order(**kwargs)
         package = "prepay_id={0}".format(raw["prepay_id"])
-        timestamp = str(int(time.time()))
         nonce_str = self.nonce_str
-        raw = dict(appId=self.app_id, timeStamp=timestamp,
-                   nonceStr=nonce_str, package=package, signType="MD5")
+        raw = dict(appId=self.app_id, timeStamp=self.timestamp,
+                   nonceStr=self.nonce_str, package=package,
+                   signType='MD5')
         sign = self.sign(raw)
-        return dict(package=package, appId=self.app_id, signType="MD5",
-                    timeStamp=timestamp, nonceStr=nonce_str, sign=sign)
+        raw['sign'] = sign
+        return raw
 
     def order_query(self, **data):
         """
