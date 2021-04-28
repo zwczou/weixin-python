@@ -130,7 +130,7 @@ class WeixinMP(object):
             params.setdefault("grant_type", "client_credential")
             params.setdefault("appid", self.app_id)
             params.setdefault("secret", self.app_secret)
-            data = self.get("/token", params, False)
+            data = self.get("/token", params, token=False)
             with open(self.ac_path, 'wb') as fp:
                 fp.write(data.access_token.encode("utf-8"))
             os.utime(self.ac_path, (timestamp, timestamp + data.expires_in - 600))
@@ -153,7 +153,7 @@ class WeixinMP(object):
                 int(os.path.getmtime(self.jt_path)) < timestamp:
             params = dict()
             params.setdefault("type", "jsapi")
-            data = self.get("/ticket/getticket", params, True)
+            data = self.get("/ticket/getticket", params)
             with open(self.jt_path, 'wb') as fp:
                 fp.write(data.ticket.encode("utf-8"))
             os.utime(self.jt_path, (timestamp, timestamp + data.expires_in - 600))
