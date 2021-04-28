@@ -234,7 +234,7 @@ def pay_jsapi():
         return e.message, 400
 
 
-@app.route("/pay/notify")
+@app.route("/pay/notify, methods=['POST'])
 def pay_notify():
     """
     微信异步通知
