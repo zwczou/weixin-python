@@ -154,7 +154,7 @@ class WeixinPay(object):
                    nonceStr=self.nonce_str, package=package,
                    signType='MD5')
         sign = self.sign(raw)
-        raw['sign'] = sign
+        raw['paySign'] = sign
         return raw
 
     def order_query(self, **data):
