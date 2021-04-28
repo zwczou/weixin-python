@@ -414,11 +414,11 @@ class WeixinMP(object):
         """
         发送模板消息
 
-        :paramas template_id: 模板id
+        :params template_id: 模板id
         :params touser: openid
         :params data: 模板消息对应的内容跟颜色
         :params url: 跳转地址
-        :parms miniprogram: 小程序跳转相关
+        :params miniprogram: 小程序跳转相关
         """
         kwargs.setdefault("template_id", template_id)
         kwargs.setdefault("touser", touser)
