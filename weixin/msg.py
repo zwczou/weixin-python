@@ -8,7 +8,12 @@ import hashlib
 
 from datetime import datetime
 
-from .base import WeixinError, basestring
+from .base import WeixinError
+
+try:
+    from .base import basestring
+except ImportError:
+    pass
 
 try:
     from flask import request, Response
