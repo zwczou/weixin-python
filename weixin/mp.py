@@ -130,7 +130,7 @@ class WeixinMP(object):
             params.setdefault("grant_type", "client_credential")
             params.setdefault("appid", self.app_id)
             params.setdefault("secret", self.app_secret)
-            data = self.get("/token", params, False)
+            data = self.get("/token", params, token=False)
             with open(self.ac_path, 'wb') as fp:
                 fp.write(data.access_token.encode("utf-8"))
             os.utime(self.ac_path, (timestamp, timestamp + data.expires_in - 600))
@@ -153,7 +153,7 @@ class WeixinMP(object):
                 int(os.path.getmtime(self.jt_path)) < timestamp:
             params = dict()
             params.setdefault("type", "jsapi")
-            data = self.get("/ticket/getticket", params, True)
+            data = self.get("/ticket/getticket", params)
             with open(self.jt_path, 'wb') as fp:
                 fp.write(data.ticket.encode("utf-8"))
             os.utime(self.jt_path, (timestamp, timestamp + data.expires_in - 600))
@@ -315,20 +315,20 @@ class WeixinMP(object):
         )
         return self.post("/qrcode/create", data)
 
-    def qrcode_create_limit(self, input):
+    def qrcode_create_limit(self, scene):
         """
         创建qrcode限制方式
         """
         data = dict()
-        if isinstance(input, int):
+        if isinstance(scene, int):
             data["action_name"] = "QR_LIMIT_SCENE"
             data["action_info"] = dict(scene=dict(
-                scene_id=input,
+                scene_id=scene,
             ))
-        elif isinstance(input, str):
+        elif isinstance(scene, str):
             data["action_name"] = "QR_LIMIT_STR_SCENE"
             data["action_info"] = dict(scene=dict(
-                scene_str=input,
+                scene_str=scene,
             ))
         else:
             raise ValueError("invalid type")
@@ -414,11 +414,11 @@ class WeixinMP(object):
         """
         发送模板消息
 
-        :paramas template_id: 模板id
+        :params template_id: 模板id
         :params touser: openid
         :params data: 模板消息对应的内容跟颜色
         :params url: 跳转地址
-        :parms miniprogram: 小程序跳转相关
+        :params miniprogram: 小程序跳转相关
         """
         kwargs.setdefault("template_id", template_id)
         kwargs.setdefault("touser", touser)

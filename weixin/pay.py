@@ -45,6 +45,10 @@ class WeixinPay(object):
         self.sess = requests.Session()
 
     @property
+    def timestamp(self):
+        return str(int(time.time()))
+
+    @property
     def remote_addr(self):
         if request is not None:
             return request.remote_addr
@@ -145,13 +149,52 @@ class WeixinPay(object):
         kwargs.setdefault("trade_type", "JSAPI")
         raw = self.unified_order(**kwargs)
         package = "prepay_id={0}".format(raw["prepay_id"])
-        timestamp = str(int(time.time()))
         nonce_str = self.nonce_str
-        raw = dict(appId=self.app_id, timeStamp=timestamp,
-                   nonceStr=nonce_str, package=package, signType="MD5")
+        raw = dict(appId=self.app_id, timeStamp=self.timestamp,
+                   nonceStr=self.nonce_str, package=package,
+                   signType='MD5')
         sign = self.sign(raw)
-        return dict(package=package, appId=self.app_id, signType="MD5",
-                    timeStamp=timestamp, nonceStr=nonce_str, sign=sign)
+        raw['paySign'] = sign
+        return raw
+
+    order_jsapi = jsapi
+
+    def order_h5(self, **kwargs):
+        """
+        H5 支付
+        详细规则参考 https://pay.weixin.qq.com/wiki/doc/api/H5.php?chapter=9_20&index=1
+        """
+        kwargs.setdefault('trade_type', 'MWEB')
+        return self.unified_order(**kwargs)
+
+    def order_qr(self, **kwargs):
+        """
+        Native 支付（扫码支付）
+        详细规则参考 https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_1
+        """
+        kwargs.setdefault('trade_type', 'NATIVE')
+        return self.unified_order(**kwargs)
+
+    def qrcode_url(self, product_id, shorten=False):
+        params = {
+            'appid': self.app_id,
+            'mch_id': self.mch_id,
+            'product_id': product_id,
+            'time_stamp': self.timestamp,
+            'nonce_str': self.nonce_str,
+        }
+        params['sign'] = self.sign(params)
+        text = ('weixin://wxpay/bizpayurl?sign=%(sign)s&appid=%(appid)s&mch_id=%(mch_id)s'
+                '&product_id=%(product_id)s&time_stamp=%(time_stamp)s&nonce_str=%(nonce_str)s') % params
+        if shorten:
+            return self.qrcode_url_shorten(long_url=urlencode(text))
+        return text
+
+    def qrcode_url_shorten(self, **data):
+        url = self.PAY_HOST + '/tools/shorturl'
+        if 'long_url' not in data:
+            raise WechatPayError('缺少转换短链接接口必填参数long_url')
+        return self._fetch(url, data)['short_url']
 
     def order_query(self, **data):
         """

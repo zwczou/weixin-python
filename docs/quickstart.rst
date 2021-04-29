@@ -6,19 +6,19 @@
 
 使用pip
 
-::
+.. code-block:: python
 
     sudo pip install weixin-python
 
 使用easy_install
 
-::
+.. code-block:: python
 
     sudo easy_install weixin-python
 
 安装开发版本
 
-::
+.. code-block:: python
 
     sudo pip install git+https://github.com/zwczou/weixin-python@dev
 
@@ -86,7 +86,7 @@
 
 如果使用flask
 
-::
+.. code-block:: python
 
     # -*- coding: utf-8 -*-
 
@@ -113,7 +113,7 @@
 
 如果不使用flask
 
-::
+.. code-block:: python
 
     # 根据需求导入仅供参考
     config = dict(WEIXIN_APP_ID='', WEIXIN_APP_SECRET='')
@@ -124,17 +124,17 @@
 
 如果使用django，添加视图函数为
 
-::
+.. code-block:: python
 
     url(r'^/$', weixin.django_view_func(), name='index'),
 
 如果为flask，添加视图函数为
 
-::
+.. code-block:: python
 
     app.add_url_rule("/", view_func=weixin.view_func)
 
-::
+.. code-block:: python
 
     @weixin.all
     def all(**kwargs):
@@ -171,7 +171,7 @@
 微信登陆
 ~~~~~~~~
 
-::
+.. code-block:: python
 
     @app.route("/login")
     def login():
@@ -205,7 +205,7 @@
 
 注意: 微信网页支付的timestamp参数必须为字符串
 
-::
+.. code-block:: python
 
 
     @app.route("/pay/jsapi")
@@ -246,7 +246,7 @@
 
 默认在(HOME)目录下面，如果需要更改到指定的目录，可以导入库之后修改，如下
 
-::
+.. code-block:: python
 
     import weixin
 
@@ -254,26 +254,26 @@
 
 获取公众号唯一凭证
 
-::
+.. code-block:: python
 
     weixin.access_token
 
 获取ticket
 
-::
+.. code-block:: python
 
     weixin.jsapi_ticket
 
 创建临时qrcode
 
-::
+.. code-block:: python
 
     data = weixin.qrcode_create(123, 30)
     print weixin.qrcode_show(data.ticket)
 
 创建永久性qrcode
 
-::
+.. code-block:: python
 
     # scene_id类型
     weixin.qrcode_create_limit(123)
@@ -282,7 +282,7 @@
 
 长链接变短链接
 
-::
+.. code-block:: python
 
     weixin.shorturl("http://example.com/test")
 

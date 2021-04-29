@@ -10,7 +10,7 @@
 初始化
 ~~~~~~
 
-::
+.. code-block:: python
 
     from weixin.pay import WeixinPay, WeixinPayError
     # 或者
@@ -38,7 +38,7 @@
 
 举例
 
-::
+.. code-block:: python
 
     try:
         out_trade_no = wx_pay.nonce_str
@@ -66,7 +66,7 @@
 -  signType 清明方式
 -  sign 签名
 
-::
+.. code-block:: python
 
     try:
         out_trade_no = wx_pay.nonce_str
@@ -85,13 +85,13 @@
 
 使用 ``out_trade_no`` 查询订单
 
-::
+.. code-block:: python
 
     print pay.order_query(out_trade_no=out_trade_no)
 
 或者使用 ``transaction_id`` 查询
 
-::
+.. code-block:: python
 
     print pay.order_query(transaction_id='transaction_id')
 
@@ -104,7 +104,7 @@
 
 举例
 
-::
+.. code-block:: python
 
     print pay.order_close(out_trade_no=out_trade_no)
 
@@ -118,13 +118,13 @@
 
 使用 ``out_trade_out`` 退款
 
-::
+.. code-block:: python
 
     print pay.refund(out_trade_no=out_trade_no)
 
 或者使用 ``transaction_id`` 退款
 
-::
+.. code-block:: python
 
     print pay.refund(transaction_id='transaction_id')
 
@@ -136,7 +136,7 @@ out_refund_no 商户退款单号 \* refund_id 微信退款单号
 
 使用 ``out_trade_no`` 退款
 
-::
+.. code-block:: python
 
     print pay.refund_query(out_trade_no=out_trade_no)
 
@@ -146,21 +146,21 @@ out_refund_no 商户退款单号 \* refund_id 微信退款单号
 签名
 ^^^^
 
-::
+.. code-block:: python
 
     sign = pay.sign(dict(a='b', b=2, c=3))
 
 验证签名
 ^^^^^^^^
 
-::
+.. code-block:: python
 
     pay.check(data(a='b', b=2, c=3, sign=sign))
 
 回复消息
 ^^^^^^^^
 
-::
+.. code-block:: python
 
     pay.reply("OK", True)
 
@@ -175,7 +175,7 @@ out_refund_no 商户退款单号 \* refund_id 微信退款单号
 
 举例
 
-::
+.. code-block:: python
 
     print pay.download_bill('20140603')
 
@@ -189,7 +189,7 @@ out_refund_no 商户退款单号 \* refund_id 微信退款单号
 
 举例
 
-::
+.. code-block:: python
 
     raw = self.pay.pay_individual(openid=openid, amount=amount, partner_trade_no=partner_trade_no, desc=desc)
     print raw
@@ -204,7 +204,7 @@ out_refund_no 商户退款单号 \* refund_id 微信退款单号
 
 举例
 
-::
+.. code-block:: python
 
     raw = self.pay.pay_individual_query(partner_trade_no=partner_trade_no)
     print raw
@@ -212,7 +212,7 @@ out_refund_no 商户退款单号 \* refund_id 微信退款单号
 用法
 ----
 
-::
+.. code-block:: python
 
     # -*- coding: utf-8 -*-
 
