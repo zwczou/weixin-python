@@ -238,7 +238,7 @@ out_refund_no 商户退款单号 \* refund_id 微信退款单号
             return e.message, 400
 
 
-    @app.route("/pay/notify")
+    @app.route("/pay/notify", methods=["POST"])
     def pay_notify():
         """
         微信异步通知
