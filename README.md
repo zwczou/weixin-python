@@ -1,14 +1,14 @@
 微信SDK
 ======
 
-提供微信登陆，公众号管理，微信支付，微信消息的全套功能
+提供微信登录，公众号管理，微信支付，微信消息的全套功能
 
 ## 文档目录
 
 * [快速开始](#目录)
 * [微信消息](https://github.com/zwczou/weixin-python/wiki/%E5%BE%AE%E4%BF%A1%E6%B6%88%E6%81%AF)
 * [微信支付](https://github.com/zwczou/weixin-python/wiki/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98)
-* [微信登陆](https://github.com/zwczou/weixin-python/wiki/%E5%BE%AE%E4%BF%A1%E7%99%BB%E9%99%86)
+* [微信登录](https://github.com/zwczou/weixin-python/wiki/%E5%BE%AE%E4%BF%A1%E7%99%BB%E9%99%86)
 * [微信公众平台](https://github.com/zwczou/weixin-python/wiki/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%B9%B3%E5%8F%B0)
 
 欢迎提交[Pull requests](https://github.com/zwczou/weixin-python/pulls)
@@ -27,7 +27,7 @@
 	* [参数](#参数)
 	* [初始化](#初始化)
 	* [微信消息](#微信消息)
-	* [微信登陆](#微信登陆)
+	* [微信登录](#微信登录)
 	* [微信支付](#微信支付)
 	* [微信公众号](#微信公众号)
 
@@ -48,7 +48,7 @@
 
 ## 功能
 
-* 微信登陆
+* 微信登录
 * 微信支付
 * 微信公众号
 * 微信消息
@@ -73,14 +73,14 @@
 * `WEIXIN_APP_ID` 必填，微信公众号appid
 * `WEIXIN_APP_SECRET` 必填，微信公众号appkey
 
-上面参数的必填都是根据具体开启的功能有关, 如果你只需要微信登陆，就只要选择 `WEIXIN_APP_ID` `WEIXIN_APP_SECRET`
+上面参数的必填都是根据具体开启的功能有关, 如果你只需要微信登录，就只要选择 `WEIXIN_APP_ID` `WEIXIN_APP_SECRET`
 
 * 微信消息
    * `WEIXIN_TOKEN`
    * `WEIXIN_SENDER`
    * `WEIXIN_EXPIRES_IN`
 
-* 微信登陆
+* 微信登录
     * `WEIXIN_APP_ID`
     * `WEIXIN_APP_SECRET`
 
@@ -184,12 +184,12 @@ def subscribe(**kwargs):
     return "欢迎订阅我们的公众号"
 ```
 
-### 微信登陆
+### 微信登录
 
 ```
 @app.route("/login")
 def login():
-    """登陆跳转地址"""
+    """登录跳转地址"""
 	openid = request.cookies.get("openid")
     next = request.args.get("next") or request.referrer or "/",
     if openid:
@@ -202,7 +202,7 @@ def login():
 
 @app.route("/authorized")
 def authorized():
-	"""登陆回调函数"""
+	"""登录回调函数"""
     code = request.args.get("code")
     if not code:
         return "ERR_INVALID_CODE", 400
