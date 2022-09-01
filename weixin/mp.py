@@ -54,7 +54,7 @@ class WeixinMP(object):
 
     api_uri = "https://api.weixin.qq.com"
 
-    def __init__(self, app_id, app_secret, ac_path=None, jt_path=None, ac_callback=None, jt_callback=None):
+    def __init__(self, app_id, app_secret, ac_path=None, jt_path=None, ac_callback=None, jt_callback=None, proxies=None):
         """
         :param :app_id 微信app id
         :param :app_secret 微信app secret
@@ -66,6 +66,7 @@ class WeixinMP(object):
         self.app_id = app_id
         self.app_secret = app_secret
         self.session = requests.Session()
+        self.session.proxies = proxies
         if ac_path is None:
             ac_path = os.path.join(DEFAULT_DIR, ".access_token")
         if jt_path is None:
