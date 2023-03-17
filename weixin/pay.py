@@ -193,7 +193,7 @@ class WeixinPay(object):
     def qrcode_url_shorten(self, **data):
         url = self.PAY_HOST + '/tools/shorturl'
         if 'long_url' not in data:
-            raise WechatPayError('缺少转换短链接接口必填参数long_url')
+            raise WeixinPayError('缺少转换短链接接口必填参数long_url')
         return self._fetch(url, data)['short_url']
 
     def order_query(self, **data):
