@@ -38,11 +38,11 @@ class WeixinLogin(object):
         生成微信认证地址并且跳转
 
         :param redirect_uri: 跳转地址
-        :param scope: 微信认证方式，有`snsapi_base`跟`snsapi_userinfo`两种
+        :param scope: 微信认证方式，有`snsapi_base`、`snsapi_userinfo`、`snsapi_login`三种
         :param state: 认证成功后会原样带上此字段
         """
         url = "https://open.weixin.qq.com/connect/oauth2/authorize"
-        assert scope in ["snsapi_base", "snsapi_userinfo"]
+        assert scope in ["snsapi_base", "snsapi_userinfo", "snsapi_login"]
         data = dict()
         data.setdefault("appid", self.app_id)
         data.setdefault("redirect_uri", redirect_uri)
